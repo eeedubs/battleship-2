@@ -1,18 +1,16 @@
 <template>
   <div id="app">
-    <Banner />
-    <Home />
+    <Main />
   </div>
 </template>
 
 <script>
-import { Home, Banner } from './components';
+import { Main } from './components/layout';
 
 export default {
   name: 'App',
   components: {
-    Home,
-    Banner
+    Main,
   }
 }
 </script>
@@ -24,6 +22,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  padding: 0;
 }
 </style>
