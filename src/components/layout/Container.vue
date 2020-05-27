@@ -1,14 +1,28 @@
 <template>
   <div class="container">
-    <div class="game-view">
+    <div class="player-view">
+      <h2>Your Ships</h2>
+      <GamePort />
+      <Ships />
+    </div>
+    <div class="opponent-view">
+      <h2>Opponent Ships</h2>
+      <GamePort />
+      <Ships />
     </div>
   </div>
 </template>
 
 <script>
+import { GamePort, Ships } from './gameport/index';
+
 export default {
   name: 'Container',
-  props: {}
+  props: {},
+  components: {
+    GamePort,
+    Ships,
+  }
 }
 </script>
 
@@ -16,11 +30,15 @@ export default {
 <style lang="scss" scoped>
   .container {
     display: flex;
-    flex: auto;
-    padding: 4rem;
+    justify-content: space-between;
+    padding: 3rem 0;
+    background-color: white;
 
-    .game-view {
+    .player-view, .opponent-view {
+      display: flex;
       flex: 1;
+      flex-direction: column;
+      align-items: center;
       background-color: white;
     }
   }

@@ -7,7 +7,7 @@
 
 <script>
 
-import { Banner, Container } from './index';
+import { Banner, Container } from './layout/index';
 
 export default {
   name: 'Main',
@@ -26,7 +26,8 @@ export default {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    margin: -2px;
     background-color: lightblue;
   }
 </style>
