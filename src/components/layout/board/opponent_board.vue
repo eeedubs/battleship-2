@@ -2,7 +2,7 @@
   <table class="board">
     <tr class="column" v-for="column in 10" :key="column">
       <td class="row" v-for="row in 10" :key="row">
-        <Tile 
+        <ClickableTile 
           @toggled="toggleTile(column, row)"
           :ref="`tile-${column}-${row}`"
           :isSelectedForShipPlacement="false"
@@ -14,16 +14,15 @@
 </template>
 
 <script>
-import { Tile } from './pieces/index';
+import { ClickableTile } from './pieces/index';
 
 export default {
   name: 'OpponentBoard',
   props: {
-    shipPlacementComplete: { type: Boolean },
     toggleDisabled: { type: Boolean },
   },
   components: {
-    Tile,
+    ClickableTile,
   },
   data() {
     return {}

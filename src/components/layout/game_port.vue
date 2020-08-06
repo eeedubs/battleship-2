@@ -3,28 +3,24 @@
     <div class="player-view">
       <h2>Your Ships</h2>
       <div class="board">
-        <PlayerBoard
-          :shipPlacementComplete="shipPlacementComplete"
-        />
-        <Ships />
+        <PlayerBoard />
+        <ShipsStatusPanel />
       </div>
     </div>
     
     <div class="opponent-view">
       <h2>Opponent Ships</h2>
       <div class="board">
-        <Ships />
-        <OpponentBoard 
-          :shipPlacementComplete="shipPlacementComplete" 
-        />
+        <ShipsStatusPanel />
+        <OpponentBoard />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { PlayerBoard, OpponentBoard, ShipPlacementBoard} from './board/index';
-import Ships from './ships';
+import { PlayerBoard, OpponentBoard } from './board/index';
+import { ShipsStatusPanel } from './ships/index';
 
 export default {
   name: 'GamePort',
@@ -32,38 +28,10 @@ export default {
   components: {
     PlayerBoard,
     OpponentBoard,
-    ShipPlacementBoard,
-    Ships,
-  },
-  created() {
-    window.addEventListener('keydown', (e) => {
-      // KEY LEGEND:
-      // 27: escape key
-      // 32: space
-      // 37: left arrow
-      // 38: up arrow
-      // 39: right arrow
-      // 40: down arrow
-
-      if ([32, 37, 38, 39, 40].includes(e.keyCode)) {
-        // Prevent page from scrolling
-        e.preventDefault();
-        if (this.selectedShip) {
-          this.handleShipMovement(this.selectedShip, e.keyCode);
-        };
-      };
-
-      if (e.keyCode === 27) {
-        // Unset the selected ship when user presses escape
-        this.selectedShip = null;
-      };
-    });
+    ShipsStatusPanel,
   },
   data() {
     return {
-      selectedShip: null,
-      shipPlacementComplete: false,
-      selectionRange: [],
       ships: [
         { type: 'carrier', length: 5 },
         { type: 'battleship', length: 4 },
@@ -74,11 +42,6 @@ export default {
     }
   },
   methods: {
-    setShipSelectionActive(shipType) {
-      this.selectedShip = this.ships.find(ship => ship.type == shipType);
-    },
-    handleShipMovement(ship, keyCode) {
-    },
   },
 }
 </script>

@@ -1,9 +1,9 @@
 import GamePort from './game_port';
 import Banner from './banner';
-import Ships from './ships';
+import ShipPlacement from './ship_placement';
 
 export {
   GamePort,
   Banner,
-  Ships,
+  ShipPlacement,
 }

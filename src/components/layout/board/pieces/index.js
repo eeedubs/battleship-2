@@ -1,5 +1,7 @@
-import Tile from './tile';
+import ClickableTile from './clickable_tile';
+import StaticTile from './static_tile';
 
 export {
-  Tile,
+  ClickableTile,
+  StaticTile,
 }

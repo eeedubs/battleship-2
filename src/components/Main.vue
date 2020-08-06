@@ -1,13 +1,14 @@
 <template>
   <main class="main">
     <Banner />
-    <GamePort />
+    <ShipPlacement v-if="!shipPlacementComplete" />
+    <GamePort v-if="shipPlacementComplete" />
   </main>
 </template>
 
 <script>
 
-import { Banner, GamePort } from './layout/index';
+import { Banner, GamePort, ShipPlacement } from './layout/index';
 
 export default {
   name: 'Main',
@@ -15,7 +16,13 @@ export default {
   components: {
     Banner,
     GamePort,
+    ShipPlacement,
   },
+  data() {
+    return {
+      shipPlacementComplete: false,
+    }
+  }
 }
 </script>
 

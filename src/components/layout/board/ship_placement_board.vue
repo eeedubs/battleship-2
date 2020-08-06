@@ -1,12 +1,10 @@
 <template>
   <table class="board">
-    <tr class="column" v-for="column in 10" :key="column">
-      <td class="row" v-for="row in 10" :key="row">
-        <Tile 
-          @toggled="toggleTile(column, row)"
-          :ref="`tile-${column}-${row}`"
-          :isSelectedForShipPlacement="false"
-          :isClickable="isClickable"
+    <tr class="column" v-for="c in boardData" :key="c.column">
+      <td class="row" v-for="r in c.rows" :key="r.row">
+        <StaticTile 
+          @toggled="toggleStaticTile(c.column, r.row)"
+          :selected="boardData[c.column].rows[r.row].selected"
         />
       </td>
     </tr>
@@ -14,52 +12,206 @@
 </template>
 
 <script>
-import { Tile } from './pieces/index';
+import { StaticTile } from './pieces/index';
 
 export default {
   name: 'ShipPlacementBoard',
   props: {
-    shipPlacementComplete: { type: Boolean },
+    shipPlacementActive: { type: Boolean },
+    selectedShip: { type: Object },
+    selectedTileCoordinates: { type: Object },
   },
   components: {
-    Tile,
+    StaticTile,
   },
   data() {
-    return {}
-  },
-  computed: {
-    isClickable() {
-      // returns true if it is the opponent's board, and the ships have all 
-      // been placed
-      return this.isOpponent && this.shipPlacementComplete;
-    },
+    return {
+      boardData: [
+        { column: 0, rows: [
+          { row: 0, selected: false }, 
+          { row: 1, selected: false }, 
+          { row: 2, selected: false }, 
+          { row: 3, selected: false }, 
+          { row: 4, selected: false },
+          { row: 5, selected: false }, 
+          { row: 6, selected: false }, 
+          { row: 7, selected: false }, 
+          { row: 8, selected: false }, 
+          { row: 9, selected: false },
+        ] },
+        { column: 1, rows: [
+          { row: 0, selected: false },
+          { row: 1, selected: false },
+          { row: 2, selected: false },
+          { row: 3, selected: false },
+          { row: 4, selected: false },
+          { row: 5, selected: false },
+          { row: 6, selected: false },
+          { row: 7, selected: false },
+          { row: 8, selected: false },
+          { row: 9, selected: false },
+        ] },
+        { column: 2, rows: [
+          { row: 0, selected: false },
+          { row: 1, selected: false },
+          { row: 2, selected: false },
+          { row: 3, selected: false },
+          { row: 4, selected: false },
+          { row: 5, selected: false },
+          { row: 6, selected: false },
+          { row: 7, selected: false },
+          { row: 8, selected: false },
+          { row: 9, selected: false },
+        ] },
+        { column: 3, rows: [
+          { row: 0, selected: false },
+          { row: 1, selected: false },
+          { row: 2, selected: false },
+          { row: 3, selected: false },
+          { row: 4, selected: false },
+          { row: 5, selected: false },
+          { row: 6, selected: false },
+          { row: 7, selected: false },
+          { row: 8, selected: false },
+          { row: 9, selected: false },
+        ] },
+        { column: 4, rows: [
+          { row: 0, selected: false },
+          { row: 1, selected: false },
+          { row: 2, selected: false },
+          { row: 3, selected: false },
+          { row: 4, selected: false },
+          { row: 5, selected: false },
+          { row: 6, selected: false },
+          { row: 7, selected: false },
+          { row: 8, selected: false },
+          { row: 9, selected: false },
+        ] },
+        { column: 5, rows: [
+          { row: 0, selected: false },
+          { row: 1, selected: false },
+          { row: 2, selected: false },
+          { row: 3, selected: false },
+          { row: 4, selected: false },
+          { row: 5, selected: false },
+          { row: 6, selected: false },
+          { row: 7, selected: false },
+          { row: 8, selected: false },
+          { row: 9, selected: false },
+        ] },
+        { column: 6, rows: [
+          { row: 0, selected: false },
+          { row: 1, selected: false },
+          { row: 2, selected: false },
+          { row: 3, selected: false },
+          { row: 4, selected: false },
+          { row: 5, selected: false },
+          { row: 6, selected: false },
+          { row: 7, selected: false },
+          { row: 8, selected: false },
+          { row: 9, selected: false },
+        ] },
+        { column: 7, rows: [
+          { row: 0, selected: false },
+          { row: 1, selected: false },
+          { row: 2, selected: false },
+          { row: 3, selected: false },
+          { row: 4, selected: false },
+          { row: 5, selected: false },
+          { row: 6, selected: false },
+          { row: 7, selected: false },
+          { row: 8, selected: false },
+          { row: 9, selected: false },
+        ] },
+        { column: 8, rows: [
+          { row: 0, selected: false },
+          { row: 1, selected: false },
+          { row: 2, selected: false },
+          { row: 3, selected: false },
+          { row: 4, selected: false },
+          { row: 5, selected: false },
+          { row: 6, selected: false },
+          { row: 7, selected: false },
+          { row: 8, selected: false },
+          { row: 9, selected: false },
+        ] },
+        { column: 9, rows: [
+          { row: 0, selected: false },
+          { row: 1, selected: false },
+          { row: 2, selected: false },
+          { row: 3, selected: false },
+          { row: 4, selected: false },
+          { row: 5, selected: false },
+          { row: 6, selected: false },
+          { row: 7, selected: false },
+          { row: 8, selected: false },
+          { row: 9, selected: false },
+        ] },
+      ]
+    }
   },
   methods: {
-    toggleTile (column, row) {
-      const targetTile = this.$refs[`tile-${column}-${row}`];
+    activateInitialTiles(shipLength) {
+      let startingTiles = this.boardData.map((c) => {
+        if (c.column < shipLength){
+          return c.rows[0];
+        }
+      }).filter(x => x);
+      startingTiles.forEach(tile => tile.selected = true);
     },
-    activateShipSelection(shipLength) {
-      const startingTiles = [
-        this.$refs[`tile-1-1`],
-        this.$refs[`tile-2-1`],
-        this.$refs[`tile-3-1`],
-        this.$refs[`tile-4-1`],
-        this.$refs[`tile-5-1`],
-      ]
-      startingTiles.forEach((tile) => { 
-        tile.set('isSelectedForShipPlacement', true)
-      });
+    deactivateAllTiles() {
+      this.boardData.forEach(c => c.rows.forEach(r => r.selected = false ));
     },
   },
   watch: {
     selectedShip: function (ship) {
-      this.activateShipSelection(ship.length);
+      if (this.shipPlacementActive){
+        this.activateInitialTiles(ship.length);
+      } else {
+        this.deactivateAllTiles();
+      }
     },
+    selectedTileCoordinates: {
+      handler(coordinates) {
+        this.deactivateAllTiles();
+        let targettedTiles = [];
+        if (coordinates.isHorizontal){
+          this.boardData.forEach((c) => {
+            if (c.column >= coordinates.x && c.column < coordinates.x + this.selectedShip.length){
+              targettedTiles.push(c.rows[coordinates.y]);
+            }
+          })
+        } else {
+          this.boardData[coordinates.x].rows.forEach((r) => {
+            if (r.row >= coordinates.y && r.row < coordinates.y + this.selectedShip.length) {
+              targettedTiles.push(r);
+            }
+          });
+        };
+        targettedTiles.forEach(tile => tile.selected = true);
+      },
+      deep: true
+    }
   },
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
+  .board {
+    display: flex;
+    height: 350px;
+    max-width: 25rem;
+    margin-bottom: 3rem;
+    margin-left: 1.5rem;
+    
+    .column {
+      flex: 1;
+      margin: 0;
 
+      .row {
+        margin: 0;
+      }
+    }
+  }
 </style>

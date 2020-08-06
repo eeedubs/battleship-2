@@ -25,7 +25,7 @@
 
 <script>
 export default {
-  name: 'Ships',
+  name: 'ShipsStatusPanel',
   methods: {
     shipClicked(shipType) {
       this.$emit("shipClicked", shipType)
