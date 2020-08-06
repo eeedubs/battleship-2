@@ -1,20 +1,20 @@
 <template>
   <main class="main">
     <Banner />
-    <Container />
+    <GamePort />
   </main>
 </template>
 
 <script>
 
-import { Banner, Container } from './layout/index';
+import { Banner, GamePort } from './layout/index';
 
 export default {
   name: 'Main',
   props: {},
   components: {
     Banner,
-    Container,
+    GamePort,
   },
 }
 </script>

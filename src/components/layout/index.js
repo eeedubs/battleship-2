@@ -1,7 +1,9 @@
-import Container from './Container';
-import Banner from './Banner';
+import GamePort from './game_port';
+import Banner from './banner';
+import Ships from './ships';
 
 export {
-  Container,
+  GamePort,
   Banner,
+  Ships,
 }
