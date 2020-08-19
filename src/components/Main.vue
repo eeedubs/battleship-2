@@ -2,20 +2,21 @@
   <main class="main">
     <Banner />
     <ShipPlacement v-if="!shipPlacementComplete" />
-    <GamePort v-if="shipPlacementComplete" />
+    <PlayGame v-if="shipPlacementComplete" />
   </main>
 </template>
 
 <script>
 
-import { Banner, GamePort, ShipPlacement } from './layout/index';
+import { Banner } from './navigation/index';
+import { PlayGame, ShipPlacement } from './game_screens/index';
 
 export default {
   name: 'Main',
   props: {},
   components: {
     Banner,
-    GamePort,
+    PlayGame,
     ShipPlacement,
   },
   data() {

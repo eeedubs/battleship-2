@@ -1,6 +1,6 @@
 <template>
   <div class="clickable">
-    <button :class="{ 'active': selected }"></button>
+    <button :class="{ 'active': selected, 'placed-upon': shipPlacedUpon }"></button>
   </div> 
 </template>
 
@@ -9,6 +9,7 @@ export default {
   name: 'StaticTile',
   props: {
     selected: { type: Boolean },
+    shipPlacedUpon: { type: Boolean },
   },
   data() {
     return {}
@@ -31,7 +32,15 @@ export default {
       background-color: lightskyblue;
 
       &.active {
-        background-color: lightcoral;
+        background-color: lightgreen;
+      }
+
+      &.placed-upon {
+        background-color: mediumslateblue;
+      }
+
+      &.active.placed-upon {
+        background-color: red;
       }
 
       &:focus { outline: none; }

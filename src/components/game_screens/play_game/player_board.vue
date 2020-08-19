@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { ClickableTile } from './pieces/index';
+import ClickableTile from './pieces/clickable_tile';
 
 export default {
   name: 'OpponentBoard',

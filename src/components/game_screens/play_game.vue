@@ -4,14 +4,14 @@
       <h2>Your Ships</h2>
       <div class="board">
         <PlayerBoard />
-        <ShipsStatusPanel />
+        <Ships />
       </div>
     </div>
     
     <div class="opponent-view">
       <h2>Opponent Ships</h2>
       <div class="board">
-        <ShipsStatusPanel />
+        <Ships />
         <OpponentBoard />
       </div>
     </div>
@@ -19,16 +19,15 @@
 </template>
 
 <script>
-import { PlayerBoard, OpponentBoard } from './board/index';
-import { ShipsStatusPanel } from './ships/index';
+import { Ships, PlayerBoard, OpponentBoard } from './play_game/index';
 
 export default {
   name: 'GamePort',
   props: {},
   components: {
+    Ships,
     PlayerBoard,
     OpponentBoard,
-    ShipsStatusPanel,
   },
   data() {
     return {
