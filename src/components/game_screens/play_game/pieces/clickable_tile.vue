@@ -28,7 +28,7 @@ export default {
 <style lang="scss" scoped>
   .clickable {
     display: flex;
-    opacity: 70%;
+    opacity: 0.7;
     width: 2.2rem;
     height: 2.2rem;
 

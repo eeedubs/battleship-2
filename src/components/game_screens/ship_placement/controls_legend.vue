@@ -1,37 +1,37 @@
 <template>
   <div class="icon-container">
-    <div class="up">
-      <b-icon icon='up-arrow-square' variant='black'></b-icon>
-      <span></span>
+    <div>
+      <unicon name="arrow-up" height="2rem" fill="white" class="icon" />
+      <h4>Move down</h4>
     </div>
-    <!-- <div class="right">
-      <b-icon icon="arrow-right-square" class="icon" />
-      <span></span>
+    <div>
+      <unicon name="arrow-right" height="2rem" fill="white" class="icon" />
+      <h4>Move right</h4>
     </div>
-    <div class="down">
-      <b-icon icon="arrow-down-square" class="icon" />
-      <span></span>
+    <div>
+      <unicon name="arrow-down" height="2rem" fill="white" class="icon" />
+      <h4>Move down</h4>
     </div>
-    <div class="left">
-      <b-icon icon="arrow-left-square" class="icon" />
-      <span></span>
-    </div> -->
-    <!-- <div class="down">
-      <b-icon-arrow-down class="icon" />
-      <span></span>
-    </div> -->
+    <div>
+      <unicon name="arrow-left" height="2rem" fill="white" class="icon" />
+      <h4>Move left</h4>
+    </div>
+    <div>
+      <unicon name="enter" height="2rem" fill="white" class="icon" />
+      <h4>Place ship</h4>
+    </div>
+  <div>
+    <small>esc</small>
+    <h4>Deselect</h4>
+  </div>
   </div>
 </template>
 
 <script>
-import {  BIconArrowUpSquare,
-} from 'bootstrap-vue';
-
 export default {
   name: 'ControlsLegend',
   props: {},
   components: {
-    BIconArrowUpSquare
   },
   created() {
   },
@@ -48,14 +48,36 @@ export default {
 <style lang="scss" scoped>
   .icon-container {
     display: flex;
-    flex: 1;
     flex-direction: column;
-    .up, .right, .down, .left {
+    padding: 0 1rem;
+    flex: 1;
+    background-color: lightgray;
+    div {
       display: flex;
-      font-size: 3rem;
-    }
-    .icon {
-      font-size: 3rem;
+      align-items: center;
+      margin-bottom: 0.25rem;
+      background-color: white;
+
+      .icon {
+        color: black;
+        height: 2rem;
+        border: 1px solid black;
+        border-radius: 0.35rem;
+        background-color: black;
+      }
+
+      small {
+        color: white;
+        font-weight: bold;
+        font-size: 1rem;
+        height: 2rem;
+        width: 1.7rem;
+        border: 1px solid black;
+        border-radius: 0.35rem;
+        background-color: black;
+      }
+
+      h4 { margin-left: 1rem; }
     }
   }
 </style>

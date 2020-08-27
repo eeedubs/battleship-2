@@ -155,15 +155,10 @@ export default {
 <style lang="scss" scoped>
   .board {
     display: flex;
-    height: 350px;
-    max-width: 25rem;
-    margin-bottom: 3rem;
-    margin: 0 1.5rem;
-    
+    padding: 1rem;
+    margin-bottom: 2rem;
+    background-color: white;
     .column {
-      flex: 1;
-      margin: 0;
-
       .row {
         margin: 0;
       }

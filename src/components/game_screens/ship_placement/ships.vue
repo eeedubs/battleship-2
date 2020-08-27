@@ -42,24 +42,29 @@ export default {
   .ship-container {
     display: flex;
     flex-direction: column;
+    height: 100%;
+    background-color: lightgray;
+    flex: 1;
+    padding: 0 1rem;
     tr {
       display: flex;
-      flex: 1;
+      margin-bottom: 0.5rem;
       flex-direction: column;
-      height: 1.5rem;
-      width: 13rem;
-      margin: 0 1rem 2rem;
       align-items: flex-start;
       .ship-font {
+        background-color: white;
         display: flex;
-        flex: 1;
-        max-width: 11rem;
         justify-content: space-between;
         width: 100%;
-        span { line-height: 2rem; }
+        span { 
+          line-height: 2rem;
+          margin-right: 2rem;
+        }
       }
       .ship-graphics {
         display: flex;
+        background-color: white;
+        width: 100%;
         button {
           display: block;
           font-size: 1.1rem;
@@ -74,7 +79,7 @@ export default {
             background-color: lightgreen; 
             &:disabled { 
               background-color: lightgray; 
-              opacity: 70% 
+              opacity: 0.7; 
             };
           }
           &.remove-button { 

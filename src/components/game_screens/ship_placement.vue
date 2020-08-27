@@ -1,8 +1,10 @@
 <template>
   <div class="container">
     <div class="ship-placement-view">
-      <h2>Place Your Ships</h2>
-      <div class="board">
+      <div class="header">
+        <h1>Place Your Ships</h1>
+      </div>
+      <div class="components">
         <Ships 
           :ships="ships"
           :shipPlacementIsActive="shipPlacementIsActive"
@@ -235,25 +237,28 @@ export default {
     display: flex;
     justify-content: center;
     background-color: white;
-    padding: 1rem;
-    min-height: 32rem;
     font-family: 'Alto';
+    padding-bottom: 1rem;
+    height: 41rem;
 
     .ship-placement-view {
       display: flex;
       flex: 1;
       flex-direction: column;
 
-      h2 {
-        margin: 1rem 0 2rem;
+      .header {
+        width: 100%;
+        padding: 1rem;
+        background-color: lightgray;
+        h1 {
+          padding: 1rem 0;
+          background-color: white; 
+        }
       }
 
-      .board {
+      .components {
         display: flex;
-        flex: 1;
-        flex-direction: row;
-        justify-content: center;
-        width: 100%;
+        background-color: lightgray;
       }
     }
   }

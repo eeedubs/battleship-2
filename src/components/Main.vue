@@ -1,5 +1,5 @@
 <template>
-  <main class="main">
+  <main>
     <Banner />
     <ShipPlacement v-if="!shipPlacementComplete" />
     <PlayGame v-if="shipPlacementComplete" />
@@ -29,7 +29,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-  .main {
+  main {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
