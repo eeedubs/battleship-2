@@ -8,8 +8,8 @@ node_modules
 .env
 
 # config files
-*/config.db.*
 */development.json
+*/dev_env.sh
 
 # Log files
 npm-debug.log*

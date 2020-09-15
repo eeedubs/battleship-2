@@ -20,6 +20,9 @@ const db = require('./db/config.db');
 db.connect((err, client, done) => {
   if (err) console.log(err);
 
+  // return client.query(`SELECT * FROM users;`)
+    // .then(res => console.log(res.rows[0]))
+    // .catch(e => console.log(e));
   app.listen(apiPort, () => console.log(`app listening on port ${apiPort}.`));
 
   // middleware that is specific to this app
@@ -28,5 +31,5 @@ db.connect((err, client, done) => {
     next()
   })
 
-  client.release();
+  client.end();
 });
