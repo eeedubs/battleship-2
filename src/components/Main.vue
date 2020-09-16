@@ -1,27 +1,35 @@
 <template>
-  <main class="main">
+  <main>
     <Banner />
-    <Container />
+    <ShipPlacement v-if="!shipPlacementComplete" />
+    <PlayGame v-if="shipPlacementComplete" />
   </main>
 </template>
 
 <script>
 
-import { Banner, Container } from './layout/index';
+import { Banner } from './navigation/index';
+import { PlayGame, ShipPlacement } from './game_screens/index';
 
 export default {
   name: 'Main',
   props: {},
   components: {
     Banner,
-    Container,
+    PlayGame,
+    ShipPlacement,
   },
+  data() {
+    return {
+      shipPlacementComplete: false,
+    }
+  }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-  .main {
+  main {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;

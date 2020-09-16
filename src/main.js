@@ -1,10 +1,22 @@
 import Vue from 'vue';
 import App from './App.vue';
 
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
-
+// BootStrap
+import { BootstrapVue } from 'bootstrap-vue';
 Vue.use(BootstrapVue);
-Vue.use(IconsPlugin);
+
+// Unicon (icons)
+import Unicon from 'vue-unicons'
+import { 
+  uniEnter,
+  uniArrowUp,
+  uniArrowRight,
+  uniArrowDown,
+  uniArrowLeft,
+} from 'vue-unicons/src/icons'
+
+Unicon.add([uniEnter, uniArrowUp, uniArrowRight, uniArrowDown, uniArrowLeft])
+Vue.use(Unicon)
 
 Vue.config.productionTip = false
 

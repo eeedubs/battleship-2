@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { Main } from './components/index.js';
+import { Main } from './components/Main';
 
 export default {
   name: 'App',
