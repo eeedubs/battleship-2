@@ -1,7 +1,9 @@
 #!/bin/bash
 printf "dropping db\n";
-dropdb -p ${PGPORT} -h ${PGHOST} -U ${PGUSER} --if-exists -e ${PGDATABASE};
+dropdb -p ${PGPORT} -h ${HOST} -U ${PGUSER} --if-exists -e ${PGDATABASE};
 printf "\nCreating db\n"
-createdb -p ${PGPORT} -h ${PGHOST} -U ${PGUSER} -e ${PGDATABASE}
+createdb -p ${PGPORT} -h ${HOST} -U ${PGUSER} -e ${PGDATABASE}
 printf "\nLoading db schema\n"
-psql -p ${PGPORT} -h ${PGHOST} -U ${PGUSER} -f ./db/schema.sql
+psql -p ${PGPORT} -h ${HOST} -U ${PGUSER} -f ./db/schema.sql
+printf "\nLoading db seeds\n"
+psql -p ${PGPORT} -h ${HOST} -U ${PGUSER} -f ./db/seeds.sql

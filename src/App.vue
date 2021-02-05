@@ -1,16 +1,17 @@
 <template>
   <div id="app">
-    <Main />
+    <Banner />
+    <router-view />
   </div>
 </template>
 
 <script>
-import { Main } from './components/Main';
+import Banner from './components/banner/top_banner';
 
 export default {
   name: 'App',
   components: {
-    Main,
+    Banner,
   }
 }
 </script>
@@ -22,5 +23,8 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  background-color: lightblue;
+  min-height: 100vh;
+  margin: 0 -2px; 
 }
 </style>

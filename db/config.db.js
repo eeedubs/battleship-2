@@ -2,7 +2,7 @@
 
 require('dotenv').config();
 const { Pool } = require('pg');
-const PGHOST = process.env.PGHOST;
+const PGHOST = process.env.HOST;
 const PGUSER = process.env.PGUSER;
 const PGDATABASE = process.env.PGDATABASE;
 

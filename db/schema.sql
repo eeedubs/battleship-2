@@ -6,6 +6,7 @@ CREATE TABLE users(
   password_hash VARCHAR NOT NULL,
   first_name VARCHAR,
   last_name VARCHAR,
+  user_name VARCHAR,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -40,3 +41,10 @@ CREATE TABLE guesses(
   coordinates_point POINT NOT NULL,
   was_successful BOOLEAN DEFAULT false
 );
+
+CREATE TABLE json_web_tokens(
+  id bytea NOT NULL PRIMARY KEY,
+  user_id uuid NOT NULL REFERENCES users,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  expires_at TIMESTAMPTZ NOT NULL DEFAULT (now() + '01:00:00'::INTERVAL)
+)

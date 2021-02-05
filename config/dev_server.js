@@ -1,35 +1,54 @@
 require('dotenv').config();
-const express = require('express');
-const app = express();
-const apiPort = process.env.API_PORT || 3000;
-const { resolve } = require('path');
-const cors = require('cors');
-const corsOptions = { origin: `http://localhost:${apiPort}` };
+const isProduction = process.env.NODE_ENV === 'production';
 
+const express     = require('express');
+const app         = express();
+const host        = process.env.HOST || 'localhost';
+const apiPort     = process.env.API_PORT || 3000;
+const clientPort  = process.env.CLIENT_PORT || 8080;
+const { resolve } = require('path');
+
+// Globals
+global.__basedir = resolve(__dirname, '../');
+
+// JSON parsing
+app.use(express.json());
+
+// Winston
+const { winstonLogger, winstonErrorLogger } = require('./middleware/config.winston');
+app.use(winstonLogger());
+app.use(winstonErrorLogger());
+
+// Express-session
+// const expressSessionMiddleware = require('./middleware/config.express_session');
+// app.use(expressSessionMiddleware);
+
+// CORS
+const cors = require('cors');
+const corsOptions = { 
+  origin: [
+    `http://${host}:${apiPort}`, // API 
+    `https://${host}:${apiPort}`, // API 
+    `http://${host}:${clientPort}`, // Consumer
+    `https://${host}:${clientPort}` // Consumer
+  ],
+  credentials: true,
+  exposedHeaders: ['set-cookie'],
+};
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 
 // UI
-const publicPath = resolve(__dirname, './dist');
+const publicPath = resolve(__dirname, '../dist');
 const staticConf = { maxAge: '1y', etag: false };
 app.use(express.static(publicPath, staticConf));
 
-// DB
-const db = require('./db/config.db');
+// JWT
+const jwtMiddleware = require('./middleware/config.jsonwebtoken');
 
-db.connect((err, client, done) => {
-  if (err) console.log(err);
+// Routes
+const apiRoutes = require('./api/index')(jwtMiddleware);
+app.use('/api', apiRoutes);
 
-  // return client.query(`SELECT * FROM users;`)
-    // .then(res => console.log(res.rows[0]))
-    // .catch(e => console.log(e));
-  app.listen(apiPort, () => console.log(`app listening on port ${apiPort}.`));
-
-  // middleware that is specific to this app
-  app.use(function timeLog (req, res, next) {
-    console.log('Time: ', Date.now())
-    next()
-  })
-
-  client.end();
-});
+// Port
+app.listen(apiPort, () => console.log(`app listening on port ${apiPort}.`));
