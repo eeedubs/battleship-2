@@ -1,4 +1,4 @@
-import { http } from '../../http'
+import { http } from '@/http'
 
 export default {
   state: {
@@ -9,43 +9,68 @@ export default {
     error: null,
   },
   actions: {
-    async signIn({commit}, user) {
-      commit('authRequest');
-      try {
-        var { data } = await http.post('/sessions', user);
-      } catch(error) {
-        commit('authError', error.response.data.errorMessage);
+    async refreshJwt({commit}, oldToken) {
+      let response = await http.put('/sessions', { token: oldToken });
+      if (response.data && response.data.auth) {
+        const { token, user } = response.data;
+        http.defaults.headers.common['x-access-token'] = token;
+        commit('authSuccess', { token, user });
+        return response.data;
+      } else {
+        commit('authError', 'Authentication failed.');
         localStorage.removeItem('token');
         return;
       }
-      if (data && data.auth) {
-        const { token, user } = data;
-        localStorage.setItem('user', user);
-        http.defaults.headers.common['x-access-token'] = token;
-        commit('authSuccess', { token, user });
-        return data;
+    },
+    async signIn({commit}, user) {
+      commit('authRequest');
+      try {
+        let response = await http.post('/sessions', user);
+        if (response.data && response.data.auth) {
+          const { token, user } = response.data;
+          localStorage.setItem('user', user);
+          http.defaults.headers.common['x-access-token'] = token;
+          commit('authSuccess', { token, user });
+          return response.data;
+        } else {
+          commit('authError', 'Authentication failed.');
+          localStorage.removeItem('token');
+          return;
+        }
+      } catch(error) {
+        localStorage.removeItem('token');
+        if (error.response && error.response.data){
+          commit('authError', error.response.data.error);
+        } else {
+          commit('authError', error);
+        }
+        return;
       }
-      commit('authError', data.errorMessage);
-      return;
     },
     async signUp({commit}, user) {
       commit('authRequest');
       try {
-        var { data } = await http.post('/users', user);
-      } catch(error) {
-        commit('authError', error.response.data.errorMessage);
+        let response = await http.post('/users', user);
+        if (response.data && response.data.auth) {
+          const { token, user } = response.data;
+          localStorage.setItem('user', user);
+          http.defaults.headers.common['x-access-token'] = token;
+          commit('authSuccess', { token, user });
+          return response.data;
+        } else {
+          commit('authError', 'Authentication failed.');
+          localStorage.removeItem('token');
+          return;
+        }
+      } catch (error) {
         localStorage.removeItem('token');
+        if (error.response && error.response.data){
+          commit('authError', error.response.data.error);
+        } else {
+          commit('authError', error);
+        }
         return;
       }
-      if (data && data.auth) {
-        const { token, user } = data;
-        localStorage.setItem('user', user);
-        http.defaults.headers.common['x-access-token'] = token;
-        commit('authSuccess', { token, user });
-        return data;
-      }
-      commit('authError', data.errorMessage);
-      return;
     },
     async signOut({commit, state}) {
       await http.delete('/sessions', { token: state.token })
@@ -53,6 +78,9 @@ export default {
       localStorage.removeItem('token');
       delete http.defaults.headers.common['x-access-token'];
       return;
+    },
+    async clearError({commit}) {
+      commit('clearError');
     },
   },
   mutations: {
@@ -65,19 +93,25 @@ export default {
       state.user = user;
       state.error = null;
     },
-    authError(state, { error }) {
-      state.status = 'error'
+    authError(state, error ) {
+      state.status = 'error';
+      state.token = null;
       state.error = error;
+      state.user = null;
     },
     signOut(state) {
       state.status = null;
       state.token = null;
       state.user = {};
     },
+    clearError(state) {
+      state.error = null;
+    },
   },
   getters: {
-    isLoggedIn: state => !!state.token,
+    isLoggedIn: state => !!state.token && !!state.user,
     currentUser: state => state.user,
-    error: state => state.error,
+    getError: state => state.error,
+    getToken: state => state.token,
   },
 }

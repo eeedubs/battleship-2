@@ -3,20 +3,20 @@ const db = require(__basedir + '/src/lib/api/db');
 const _ = require('lodash');
 
 module.exports = {
-  execute(id) {
+  execute(username) {
     try {
       const query = 
         `SELECT id AS user_id
         FROM users
-        WHERE id = $(id)`
+        WHERE username = $(username)`
 
-      const result = await db.oneOrNone(query, { id: id })
+      const result = await db.oneOrNone(query, { username: username })
       if (_.isEmpty(results)) {
         return { error:  `User not found.` };
       }
       return {
         user: { id: result.id }
-      }
+      }    
     } catch(error) {
       console.log(error);
       return { error: "Something went wrong." };

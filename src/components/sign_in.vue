@@ -30,6 +30,9 @@ export default {
       password: '',
     }
   },
+  async created() {
+    await this.$store.dispatch('clearError');
+  },
   methods: {
     async submit() {
       try {
@@ -41,16 +44,17 @@ export default {
           this.$router.push({ path: '/dashboard' });
         }
       } catch(error) {
-        console.log(error);
+        console.log("Error: ", error.response.statusText);
       };
     },
   },
   computed: {
     ...mapGetters({
       isLoggedIn: 'isLoggedIn',
+      error: "getError",
     }),
     errorState() {
-      return this.$store.getters.error
+      return this.error;
     }
   }
 }

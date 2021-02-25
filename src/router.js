@@ -40,25 +40,30 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const pageRequiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  const isAuthPage = to.matched.some(record => ['sign-in', 'sign-up'].includes(record.name))
+  const toPageRequiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const toAuthPage = to.matched.some(record => ['sign-in', 'sign-up'].includes(record.name))
+  const fromAuthPage = from.matched.some(record => ['sign-in', 'sign-up'].includes(record.name))
   const isLoggedIn = store.getters.isLoggedIn;
   
-  if (pageRequiresAuth) {
+  if (toPageRequiresAuth) {
     // Redirect to sign-in if attempting to access a page requiring authentication
     if (!isLoggedIn) {
-      next({ name: 'sign-in' });
+      store.dispatch('signOut');
+      return next({ name: 'sign-in' });
+    }
+    // If not from an auth page and is logged in, refresh the json web token.
+    if (isLoggedIn && !fromAuthPage) {
+      store.dispatch('refreshJwt', store.getters.getToken);
+      return next();
     }
   }
 
-  if (isAuthPage) {
+  if (toAuthPage && isLoggedIn) {
     // Redirect to dashboard if attempting to access an auth page (sign-up or sign-in)
-    if (isLoggedIn) {
-      next({ name: 'dashboard' })
-    }
+    return next({ name: 'dashboard' })
   }
 
-  next();
+  return next();
 });
 
 export default router;

@@ -8,6 +8,7 @@ module.exports = {
       const query = 
         `SELECT
           id,
+          email,
           first_name,
           last_name,
           user_name,
@@ -15,21 +16,23 @@ module.exports = {
         FROM users
         WHERE email = $(email)`
 
-      const results = await db.oneOrNone(query, { email: email });
-      if (_.isEmpty(results)) {
-        return { message:  `User not found with email ${email}` };
+      const result = await db.oneOrNone(query, { email: email });
+      if (_.isEmpty(result)) {
+        return { error:  `User not found with email "${email}"` };
       };
       return {
         user: {
-          id: results.id,
-          firstName: results.first_name,
-          lastName: results.last_name,
-          userName: results.user_name,
-          passwordHash: results.password_hash
+          id: result.id,
+          email: result.email,
+          firstName: result.first_name,
+          lastName: result.last_name,
+          userName: result.user_name,
+          passwordHash: result.password_hash
         }
       };
     } catch(error) {
-      throw `Error: ${error}`
+      console.log("Error: ", error);
+      return { error: "Something went wrong." };
     };
   },
 }

@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     async signOut() {
-      const token = this.$store.getters.token;
+      const token = this.token;
       await this.$store.dispatch('signOut', { token: token });
       this.$router.push({ path: '/sign-in' });
     },
@@ -44,6 +44,7 @@ export default {
     ...mapGetters({
       currentUser: 'currentUser',
       isLoggedIn: 'isLoggedIn',
+      token: 'getToken',
     }),
     userName() {
       return this.currentUser ? this.currentUser.userName : null;

@@ -5,7 +5,8 @@
 </template>
 
 <script>
-
+import { http } from '@/http';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'Dashboard',
@@ -14,11 +15,39 @@ export default {
   },
   data() {
     return {
-      data: {},
+      data: {
+        games: [],
+        gameInvitations: [],
+      },
+    }
+  },
+  async created() {
+    try {
+      const response = await http.get("/dashboard", {
+        headers: {
+          'Access-Control-Allow-Headers': 'x-access-token',
+          'x-access-token': this.token
+        }
+      });
+      if (response.error){
+        this.games = [];
+        this.gameInvitations = [];
+      } else {
+        this.games = response.games;
+        this.gameInvitations = response.gameInvitations;
+      }
+    } catch (error) {
+      console.log('Error: ', error.response.statusText);
     }
   },
   methods: {
   },
+  computed: {
+    ...mapGetters({
+      currentUser: 'currentUser',
+      token: 'getToken',
+    }),
+  }
 }
 </script>
 

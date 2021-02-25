@@ -59,7 +59,7 @@ export default {
           password: this.password,
         });
 
-        if (response.auth){
+        if (response && response.auth){
           this.$router.push({ path: '/dashboard' });
         };
       } catch(error){

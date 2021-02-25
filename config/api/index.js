@@ -6,6 +6,9 @@ const router = express.Router();
 module.exports = (jwtMiddleWare) => {
   const userRoutes = require('./routes/users')(jwtMiddleWare);
   router.use(userRoutes);
+
+  const dashboardRoutes = require('./routes/dashboard')(jwtMiddleWare);
+  router.use(dashboardRoutes);
   
   // /api/games
   // const gameRoutes = require('./routes/games')

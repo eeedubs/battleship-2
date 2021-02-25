@@ -6,7 +6,7 @@ module.exports = {
   async execute(firstName, lastName, userName, email, passwordHash) {
     try {
       const query =
-        `INSERT INTO USERS
+        `INSERT INTO users
           (first_name, last_name, user_name, email, password_hash)
         VALUES
           ($(firstName), $(lastName), $(userName), $(email), $(passwordHash))
@@ -20,13 +20,16 @@ module.exports = {
         passwordHash: passwordHash,
       })
       return { 
-        id: results.id,
-        firstName: results.first_name,
-        lastName: results.last_name,
-        userName: results.user_name
-      };
+        user: {
+          id: results.id,
+          firstName: results.first_name,
+          lastName: results.last_name,
+          userName: results.user_name
+        }
+      }
     } catch(error) {
-      throw `Error: ${error}`
+      console.log(error);
+      return { error: "Something went wrong." };
     };
   }
 }

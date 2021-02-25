@@ -6,10 +6,8 @@ module.exports = (jwtMiddleWare) => {
   // Route prefix is /api/sessions
   const sessionsController = require(__basedir + '/controllers/sessions_controller')()
 
-  router.get('/sign-in', (req, res) => {
-    if (req.headers['x-access-token']){
-      res.redirect('/dashboard');
-    }
+  router.put('/sessions', (req, res) => {
+    sessionsController.refresh(req, res);
   });
 
   // POST request to create sessions (log in)

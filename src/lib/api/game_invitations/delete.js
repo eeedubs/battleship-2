@@ -1,14 +1,19 @@
+
 const { resolve } = require('path');
 const db = require(__basedir + '/src/lib/api/db');
 
 module.exports = {
-  async execute() {
+  async execute(gameId) {
     try {
-      const query = `SELECT * FROM users`
-      return await db.any(query);
+      const query =
+        `DELETE FROM game_invitations
+        WHERE id = $(gameId);`
+
+      await db.one(query, { gameId: gameId })
+      return;
     } catch(error) {
       console.log(error);
       return { error: "Something went wrong." };
-    }
+    };
   }
 }

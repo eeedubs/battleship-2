@@ -7,36 +7,37 @@ CREATE TABLE users(
   first_name VARCHAR,
   last_name VARCHAR,
   user_name VARCHAR,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE TABLE game_statuses(
-  id INTEGER NOT NULL PRIMARY KEY,
-  status VARCHAR NOT NULL
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT email_key UNIQUE (email)
 );
 
 CREATE TABLE games(
   id uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-  player_1_id uuid REFERENCES users,
-  player_2_id uuid REFERENCES users,
+  inviter_user_id uuid REFERENCES users,
+  invitee_user_id uuid REFERENCES users,
+  winner_user_id uuid REFERENCES users,
+  loser_user_id uuid REFERENCES users,
   created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
   completed_at TIMESTAMPTZ,
-  status INTEGER NOT NULL REFERENCES game_statuses DEFAULT 0
+  archived_at TIMESTAMPTZ,
+  CONSTRAINT games_different_players CHECK (inviter_user_id != invitee_user_id),
+  CONSTRAINT games_different_winner_and_loser CHECK (winner_user_id != loser_user_id)
 );
 
 CREATE TABLE placements(
-  id INTEGER NOT NULL PRIMARY KEY,
-  user_id uuid NOT NULL REFERENCES users,
-  game_id uuid NOT NULL REFERENCES games,
+  id uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL REFERENCES users(id),
+  game_id uuid NOT NULL REFERENCES games(id),
   ship_type VARCHAR NOT NULL,
   coordinates_path PATH NOT NULL
 );
 
 CREATE TABLE guesses(
-  id INTEGER NOT NULL PRIMARY KEY,
-  game_id uuid NOT NULL REFERENCES games,
-  guessing_user_id uuid NOT NULL REFERENCES users,
-  targetted_user_id uuid NOT NULL REFERENCES users,
+  id uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+  game_id uuid NOT NULL REFERENCES games(id),
+  guessing_user_id uuid NOT NULL REFERENCES users(id),
+  targetted_user_id uuid NOT NULL REFERENCES users(id),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   coordinates_point POINT NOT NULL,
   was_successful BOOLEAN DEFAULT false
@@ -47,4 +48,14 @@ CREATE TABLE json_web_tokens(
   user_id uuid NOT NULL REFERENCES users,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   expires_at TIMESTAMPTZ NOT NULL DEFAULT (now() + '01:00:00'::INTERVAL)
-)
+);
+
+CREATE TABLE game_invitations(
+  id uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+  inviter_user_id uuid NOT NULL REFERENCES users(id),
+  invitee_user_id uuid REFERENCES users(id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  accepted_at TIMESTAMPTZ,
+  declined_at TIMESTAMPTZ,
+  archived_at TIMESTAMPTZ
+);

@@ -6,7 +6,7 @@ module.exports = (jwtMiddleWare) => {
   // Route prefix is /api/users
   const usersController = require(__basedir + '/controllers/users_controller')()
 
-  // POST request to creating users
+  // POST request for creating users
   router.post('/users', (req, res) => {
     usersController.signUp(req, res);
   });
