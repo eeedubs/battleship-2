@@ -39,7 +39,7 @@ const router = new VueRouter({
       },
     },
     {
-      path: "/games:id",
+      path: "/games/:id",
       name: "games",
       component: GameScreen,
       meta: {

@@ -3,7 +3,7 @@
     <b-navbar type="dark" variant="dark">
       <b-navbar-nav class="bootstrap-banner">
         <div v-if="current_user" class="banner-left">
-          <b-nav-item href="/dashboard">Home</b-nav-item>
+          <b-nav-item href="/dashboard">Dashboard</b-nav-item>
         </div>
 
         <div class="banner-right">
@@ -13,7 +13,6 @@
 
           <div v-if="is_signed_in" class="signed-in"> 
             <b-nav-item-dropdown :text="username" right>
-              <b-dropdown-item href="/dashboard">Dashboard</b-dropdown-item>
               <b-dropdown-item href="/settings">Settings</b-dropdown-item>
               <b-dropdown-item @click="sign_out">Sign Out</b-dropdown-item>
             </b-nav-item-dropdown>

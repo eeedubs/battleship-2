@@ -14,7 +14,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="invitation in game_invitations" :key="invitation.id">
+            <tr v-for="invitation in gameInvitations" :key="invitation.id">
               <td>{{ invitation.inviter_user_username }}</td>
               <td>{{ invitation.invitee_user_username }}</td>
               <td>{{ dateString(invitation.created_at) }}</td>
@@ -41,7 +41,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="game in games_in_progress" :key="game.game_id">
+            <tr v-for="game in gamesInProgress" :key="game.id" @click="viewGame(game)">
               <td>{{ getOpponent(game) }}</td>
               <td>{{ dateString(game.created_at) }}</td>
               <td>{{ currentTurnString(game) }}</td>
@@ -62,7 +62,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="game in games_completed" :key="game.game_id">
+            <tr v-for="game in gamesCompleted" :key="game.id" @click="viewGame(game)">
               <td>{{ getOpponent(game) }}</td>
               <td>{{ dateString(game.created_at) }}</td>
               <td>{{ dateString(game.completed_at) }}</td>
@@ -89,9 +89,9 @@ export default {
   },
   data() {
     return {
-      game_invitations: null,
-      games_in_progress: null,
-      games_completed: null,
+      gameInvitations: null,
+      gamesInProgress: null,
+      gamesCompleted: null,
       error: null,
     }
   },
@@ -107,9 +107,9 @@ export default {
             'x-access-token': this.token
           }
         });
-        this.game_invitations = response.data.game_invitations;
-        this.games_in_progress = response.data.games.inProgress;
-        this.games_completed = response.data.games.completed;
+        this.gameInvitations = response.data.game_invitations;
+        this.gamesInProgress = response.data.games.inProgress;
+        this.gamesCompleted = response.data.games.completed;
       } catch (error) {
         console.log('Error: ', error);
       }
@@ -129,16 +129,11 @@ export default {
     },
     async acceptInvitation(invitation) {
       const users_pool = [invitation.inviter_user_id, invitation.invitee_user_id]
-      const starting_user = _.sample(users_pool);
-
+      const starting_user_id = _.sample(users_pool);
       try {
         let response = await http.put(`game_invitations/${invitation.id}/accept`, {
-          starting_user: starting_user,
+          starting_user_id: starting_user_id,
         })
-        if (response.error) {
-          this.error = response.error;
-          return;
-        }
 
         this.$router.push({ path: `/games/${response.data.id}` });
       } catch(error) {
@@ -152,7 +147,10 @@ export default {
       } catch(error) {
         console.log('Error: ', error);
       }
-    }
+    },
+    viewGame(game) {
+      this.$router.push({ path: `/games/${game.id}` });
+    },
   },
   computed: {
     ...mapGetters({

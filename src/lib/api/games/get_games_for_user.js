@@ -8,7 +8,7 @@ module.exports = {
     try {
       const query =
         `SELECT
-          bg.id AS game_id,
+          bg.id,
           invitee_user.id AS invitee_user_id,
           invitee_user.username AS invitee_username,
           inviter_user.id AS inviter_user_id,
