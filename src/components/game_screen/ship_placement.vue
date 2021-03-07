@@ -32,10 +32,10 @@
 </template>
 
 <script>
-import { ControlsLegend, Ships, PlacementBoard } from './placement/index';
+import { ControlsLegend, Ships, PlacementBoard } from './ship_placement/index';
 
 export default {
-  name: 'Placement',
+  name: 'ShipPlacement',
   props: {},
   components: {
     ControlsLegend,

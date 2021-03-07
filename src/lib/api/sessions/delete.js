@@ -9,7 +9,8 @@ module.exports = {
         `DELETE FROM json_web_tokens
         WHERE id = $(token);`
 
-      await db.oneOrNone(query, { token: token })
+      await db.none(query, { token: token });
+      return;
     } catch(error) {
       console.log(error);
       return { error: error };

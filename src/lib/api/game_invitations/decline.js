@@ -3,13 +3,14 @@ const { resolve } = require('path');
 const db = require(__basedir + '/src/lib/api/db');
 
 module.exports = {
-  async execute(gameId) {
+  async execute(invitation_id) {
     try {
       const query =
-        `DELETE FROM game_invitations
-        WHERE id = $(gameId);`
+        `UPDATE battleship_game_invitations
+        SET declined_at = now()
+        WHERE id = $(invitation_id);`
 
-      await db.one(query, { gameId: gameId })
+      await db.none(query, { invitation_id: invitation_id })
       return;
     } catch(error) {
       console.log(error);

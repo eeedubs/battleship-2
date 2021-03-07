@@ -1,13 +1,13 @@
 <template>
   <main>
-    <h1>Sign in</h1>
+    <h1>Sign In</h1>
     <form @submit.prevent="submit">
       <label for="Email">Email:</label>
       <input type="text" v-model="email" autocomplete required>
       <br>
       <label for="Password">Password:</label>
       <input type="password" v-model="password" autocomplete required>
-      <button type="submit">Log in</button>
+      <button type="submit">Sign In</button>
       <p v-if="errorState" class="error-message">
         <span>{{ errorState }}</span>
       </p>
@@ -31,12 +31,12 @@ export default {
     }
   },
   async created() {
-    await this.$store.dispatch('clearError');
+    await this.$store.dispatch('clear_error');
   },
   methods: {
     async submit() {
       try {
-        const response = await this.$store.dispatch('signIn', { 
+        const response = await this.$store.dispatch('sign_in', { 
           email: this.email, 
           password: this.password,
         });
@@ -50,8 +50,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      isLoggedIn: 'isLoggedIn',
-      error: "getError",
+      is_signed_in: 'is_signed_in',
+      error: "get_error",
     }),
     errorState() {
       return this.error;

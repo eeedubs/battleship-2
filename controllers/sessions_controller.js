@@ -16,10 +16,11 @@ module.exports = () => {
   return {
     refresh: async(req, res) => {
       try {
-        const oldToken = req.body.token;
+        const old_token = req.body.token;
 
-        let response = await refreshSessionApi.execute(oldToken);
+        let response = await refreshSessionApi.execute(old_token);
         if (response.error) {
+          await deleteSessionApi.execute(old_token);
           return res.status(401).send({ auth: false, token: '', error: response.error });
         } else {
           const { token, user } = response;
@@ -30,7 +31,7 @@ module.exports = () => {
       }
     },
     // POST /api/sessions
-    signIn: async(req, res) => {
+    sign_in: async(req, res) => {
       try {
         let response = await getUserByEmailApi.execute(req.body.email);
 
@@ -53,7 +54,7 @@ module.exports = () => {
         return res.status(500).send({ auth: false, token: '', user: null, error: error });
       }
     },
-    signOut: async(req, res) => {
+    sign_out: async(req, res) => {
       try {
         const token = req.body.token;
         if (token){

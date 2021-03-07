@@ -4,26 +4,25 @@ const router = express.Router();
 
 // /api/users
 module.exports = (jwtMiddleWare) => {
-  const userRoutes = require('./routes/users')(jwtMiddleWare);
-  router.use(userRoutes);
-
+  // /api/dashboard
   const dashboardRoutes = require('./routes/dashboard')(jwtMiddleWare);
   router.use(dashboardRoutes);
-  
-  // /api/games
-  // const gameRoutes = require('./routes/games')
-  // router.use(gameRoutes);
-  
-  // /api/guesses
-  // const guessRoutes = require('./routes/guesses')
-  // router.use(guessRoutes);
-  
-  // /api/placements
-  // const placementRoutes = require('./routes/placements')
-  // router.use(placementRoutes);
 
+  // /api/game_invitations
+  const gameInvitationRoutes = require('./routes/game_invitations')(jwtMiddleWare);
+  router.use(gameInvitationRoutes);
+
+  // /api/games
+  const gameRoutes = require('./routes/games')(jwtMiddleWare);
+  router.use(gameRoutes);
+
+  // /api/sessions
   const sessionRoutes = require('./routes/sessions')(jwtMiddleWare);
   router.use(sessionRoutes);
+
+  // /api/users
+  const userRoutes = require('./routes/users')(jwtMiddleWare);
+  router.use(userRoutes);
 
   return router;
 }

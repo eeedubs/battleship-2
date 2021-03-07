@@ -6,7 +6,7 @@ module.exports = {
   execute(id) {
     try {
       const query = 
-        `SELECT id AS user_id
+        `SELECT id
         FROM users
         WHERE id = $(id)`
 

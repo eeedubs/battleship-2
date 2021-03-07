@@ -4,13 +4,13 @@ const getPendingGameInvitationsForUser = require(__basedir + '/src/lib/api/game_
 const getGamesForUser = require(__basedir + '/src/lib/api/games/get_games_for_user');
 
 module.exports = {
-  async execute(userId) {
+  async execute(user_id) {
     try {
-      const invites = await getPendingGameInvitationsForUser.execute(userId);
-      const games = await getGamesForUser.execute(userId);
+      const game_invitations = await getPendingGameInvitationsForUser.execute(user_id);
+      const games = await getGamesForUser.execute(user_id);
       return { 
-        invites: invites,
-        games: games
+        games: games,
+        game_invitations: game_invitations,
       }
     } catch (error) {
       console.log(error);

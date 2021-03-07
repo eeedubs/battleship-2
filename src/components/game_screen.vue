@@ -1,24 +1,23 @@
 <template>
   <main>
-    <Placement 
+    <ShipPlacement 
       v-if="!shipPlacementComplete" 
       @placementComplete="handlePlacementCompleteResponse"
     />
-    <Play v-if="shipPlacementComplete" />
+    <PlayGame v-if="shipPlacementComplete" />
   </main>
 </template>
 
 <script>
 
-import { Play } from './game_screen/play';
-import { Placement } from './game_screen/placement';
+import { PlayGame, ShipPlacement } from './game_screen/index';
 
 export default {
   name: 'GameScreen',
   props: {},
   components: {
-    Play,
-    Placement,
+    PlayGame,
+    ShipPlacement,
   },
   data() {
     return {

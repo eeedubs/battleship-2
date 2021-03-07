@@ -3,17 +3,17 @@ const { resolve } = require('path');
 const db = require(__basedir + '/src/lib/api/db');
 
 module.exports = {
-  async execute(inviterUserId, inviteeUserId) {
+  async execute(inviter_user_id, invitee_user_id) {
     try {
       const query =
-        `INSERT INTO game_invitations
+        `INSERT INTO battleship_game_invitations
           (inviter_user_id, invitee_user_id)
         VALUES
-          ($(inviterUserId), $(inviteeUserId));`
+          ($(inviter_user_id), $(invitee_user_id))`
 
-      await db.one(query, {
-        inviterUserId: inviterUserId,
-        inviteeUserId: inviteeUserId,
+      await db.none(query, {
+        inviter_user_id: inviter_user_id,
+        invitee_user_id: invitee_user_id,
       })
       return;
     } catch(error) {

@@ -9,109 +9,116 @@ export default {
     error: null,
   },
   actions: {
-    async refreshJwt({commit}, oldToken) {
-      let response = await http.put('/sessions', { token: oldToken });
-      if (response.data && response.data.auth) {
-        const { token, user } = response.data;
-        http.defaults.headers.common['x-access-token'] = token;
-        commit('authSuccess', { token, user });
-        return response.data;
-      } else {
-        commit('authError', 'Authentication failed.');
+    async refresh_jwt({commit, state}) {
+      try {
+        let response = await http.put('/sessions', { token: state.token });
+        if (response.data && response.data.auth) {
+          const { token, user } = response.data;
+          http.defaults.headers.common['x-access-token'] = token;
+          commit('auth_success', { token, user });
+          return true;
+        } else {
+          localStorage.removeItem('token');
+          return;
+        }
+      } catch(error) {
+        commit('clear_auth_data');
         localStorage.removeItem('token');
         return;
       }
     },
-    async signIn({commit}, user) {
-      commit('authRequest');
+    async sign_in({commit}, user) {
+      commit('auth_request');
       try {
         let response = await http.post('/sessions', user);
         if (response.data && response.data.auth) {
           const { token, user } = response.data;
           localStorage.setItem('user', user);
           http.defaults.headers.common['x-access-token'] = token;
-          commit('authSuccess', { token, user });
+          commit('auth_success', { token, user });
           return response.data;
         } else {
-          commit('authError', 'Authentication failed.');
+          commit('auth_error', 'Authentication failed.');
           localStorage.removeItem('token');
           return;
         }
       } catch(error) {
         localStorage.removeItem('token');
         if (error.response && error.response.data){
-          commit('authError', error.response.data.error);
+          commit('auth_error', error.response.data.error);
         } else {
-          commit('authError', error);
+          commit('auth_error', error);
         }
         return;
       }
     },
-    async signUp({commit}, user) {
-      commit('authRequest');
+    async sign_up({commit}, user) {
+      commit('auth_request');
       try {
         let response = await http.post('/users', user);
         if (response.data && response.data.auth) {
           const { token, user } = response.data;
           localStorage.setItem('user', user);
           http.defaults.headers.common['x-access-token'] = token;
-          commit('authSuccess', { token, user });
+          commit('auth_success', { token, user });
           return response.data;
         } else {
-          commit('authError', 'Authentication failed.');
+          commit('auth_error', 'Authentication failed.');
           localStorage.removeItem('token');
           return;
         }
       } catch (error) {
         localStorage.removeItem('token');
         if (error.response && error.response.data){
-          commit('authError', error.response.data.error);
+          commit('auth_error', error.response.data.error);
         } else {
-          commit('authError', error);
+          commit('auth_error', error);
         }
         return;
       }
     },
-    async signOut({commit, state}) {
-      await http.delete('/sessions', { token: state.token })
-      commit('signOut');
+    async sign_out({commit, state}) {
+      if (state.token) {
+        await http.delete('/sessions', { token: state.token })
+      }
+      commit('clear_auth_data');
       localStorage.removeItem('token');
       delete http.defaults.headers.common['x-access-token'];
       return;
     },
-    async clearError({commit}) {
-      commit('clearError');
+    async clear_error({commit}) {
+      commit('clear_error');
     },
   },
   mutations: {
-    authRequest(state) {
+    auth_request(state) {
       state.status = 'loading';
     },
-    authSuccess(state, { token, user }) {
+    auth_success(state, { token, user }) {
       state.status = 'success';
       state.token = token;
       state.user = user;
       state.error = null;
     },
-    authError(state, error ) {
+    auth_error(state, error ) {
       state.status = 'error';
       state.token = null;
-      state.error = error;
       state.user = null;
+      state.error = error;
     },
-    signOut(state) {
+    clear_auth_data(state) {
       state.status = null;
       state.token = null;
       state.user = {};
     },
-    clearError(state) {
+    clear_error(state) {
       state.error = null;
     },
   },
   getters: {
-    isLoggedIn: state => !!state.token && !!state.user,
-    currentUser: state => state.user,
-    getError: state => state.error,
-    getToken: state => state.token,
+    is_signed_in: state => !!state.token && !!state.user,
+    current_user: state => state.user,
+    get_error: state => state.error,
+    get_token: state => state.token,
   },
 }

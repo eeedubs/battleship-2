@@ -19,10 +19,10 @@
 </template>
 
 <script>
-import { PlayerBoard, OpponentBoard, Ships } from './internal/index';
+import { PlayerBoard, OpponentBoard, Ships } from './play_game/index';
 
 export default {
-  name: 'Play',
+  name: 'PlayGame',
   props: {},
   components: {
     Ships,

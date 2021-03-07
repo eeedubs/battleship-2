@@ -17,8 +17,8 @@ const getAllUsersApi = require(__basedir + '/src/lib/api/users/get_all_users');
 module.exports = () => {
   return {
     // POST /api/users
-    signUp: async(req, res) => {
-      const { firstName, lastName, userName, email } = req.body;
+    sign_up: async(req, res) => {
+      const { first_name, last_name, username, email } = req.body;
       
       const emailIsValid = validator.isEmail(email);
       if (!emailIsValid) {
@@ -29,7 +29,7 @@ module.exports = () => {
       const passwordHash = await bcrypt.hash(req.body.password, saltRounds)
 
       try {
-        let response = await createUserApi.execute(firstName, lastName, userName, normalizedEmail, passwordHash);
+        let response = await createUserApi.execute(first_name, last_name, username, normalizedEmail, passwordHash);
         if (response.error) {
           return res.status(500).json({ auth: false, token: '', user: null, error: response.error });
         } else {

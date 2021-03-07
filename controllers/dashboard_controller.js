@@ -7,16 +7,19 @@ module.exports = () => {
   return {
     // POST /api/dashboard
     getDataForUser: async(req, res) => {
-      const userId = req.userId;
+      const user_id = req.user_id;
       try {
-        let response = await getDataForUser.execute(userId);
+        let response = await getDataForUser.execute(user_id);
 
         if (response.error) {
           return res.status(500).json({ invites: null, games: null, error: response.error });
         } else {
-          const { games, gameInvitations } = response
+          const { games, game_invitations } = response
           
-          return res.status(200).json({ games: games, gameInvitations: gameInvitations });
+          return res.status(200).json({ 
+            games: games, 
+            game_invitations: game_invitations,
+          });
         }
       } catch(error) {
         return res.status(500).json({ invites: null, games: null, error: error });

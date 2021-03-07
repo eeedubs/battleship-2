@@ -4,18 +4,18 @@
     <form @submit.prevent="submit">
       <div class="compact">
         <div class="left">
-          <label for="FirstName">First Name:</label>
-          <input type="text" v-model="firstName" autocomplete required>
+          <label for="first_name">First Name:</label>
+          <input type="text" v-model="first_name" autocomplete required>
         </div>
         <div class="right">
-          <label for="LastName">Last Name:</label>
-          <input type="text" v-model="lastName" autocomplete required>
+          <label for="last_name">Last Name:</label>
+          <input type="text" v-model="last_name" autocomplete required>
         </div>
       </div>
       <br>
       <div class="tiered">
         <label for="Username">Username:</label>
-        <input type="text" v-model="userName" required>
+        <input type="text" v-model="username" maxlength="20" required>
         <br>
         <label for="Email">Email:</label>
         <input type="text" v-model="email" autocomplete required>
@@ -28,7 +28,7 @@
         <span>{{ error }}</span>
       </p>
     </form>
-    <h5>Already have an account? <a href="/sign-in">Log in.</a></h5>
+    <h5>Already have an account? <a href="/sign-in">Sign in.</a></h5>
   </main>
 </template>
 
@@ -40,9 +40,9 @@ export default {
   },
   data() {
     return {
-      firstName: '',
-      lastName: '',
-      userName: '',
+      first_name: '',
+      last_name: '',
+      username: '',
       email: '',
       password: '',
       error: '',
@@ -51,10 +51,10 @@ export default {
   methods: {
     async submit() {
       try {
-        const response = await this.$store.dispatch('signUp', { 
-          firstName: this.firstName,
-          lastName: this.lastName,
-          userName: this.userName,
+        const response = await this.$store.dispatch('sign_up', { 
+          first_name: this.first_name,
+          last_name: this.last_name,
+          username: this.username,
           email: this.email, 
           password: this.password,
         });

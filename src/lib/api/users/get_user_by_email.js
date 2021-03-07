@@ -11,7 +11,7 @@ module.exports = {
           email,
           first_name,
           last_name,
-          user_name,
+          username,
           password_hash
         FROM users
         WHERE email = $(email)`
@@ -24,9 +24,9 @@ module.exports = {
         user: {
           id: result.id,
           email: result.email,
-          firstName: result.first_name,
-          lastName: result.last_name,
-          userName: result.user_name,
+          first_name: result.first_name,
+          last_name: result.last_name,
+          username: result.username,
           passwordHash: result.password_hash
         }
       };
