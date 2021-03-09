@@ -1,35 +1,37 @@
 <template>
-  <main>
-    <h1>Sign up</h1>
-    <form @submit.prevent="submit">
-      <div class="compact">
-        <div class="left">
-          <label for="first_name">First Name:</label>
-          <input type="text" v-model="first_name" autocomplete required>
+  <div class="page">
+    <main>
+      <h1>Sign up</h1>
+      <form @submit.prevent="submit">
+        <div class="compact">
+          <div class="left">
+            <label for="first_name">First Name:</label>
+            <input type="text" v-model="first_name" autocomplete required>
+          </div>
+          <div class="right">
+            <label for="last_name">Last Name:</label>
+            <input type="text" v-model="last_name" autocomplete required>
+          </div>
         </div>
-        <div class="right">
-          <label for="last_name">Last Name:</label>
-          <input type="text" v-model="last_name" autocomplete required>
+        <br>
+        <div class="tiered">
+          <label for="Username">Username:</label>
+          <input type="text" v-model="username" maxlength="20" required>
+          <br>
+          <label for="Email">Email:</label>
+          <input type="text" v-model="email" autocomplete required>
+          <br>
+          <label for="Password">Password:</label>
+          <input type="password" v-model="password" autocomplete required>
         </div>
-      </div>
-      <br>
-      <div class="tiered">
-        <label for="Username">Username:</label>
-        <input type="text" v-model="username" maxlength="20" required>
-        <br>
-        <label for="Email">Email:</label>
-        <input type="text" v-model="email" autocomplete required>
-        <br>
-        <label for="Password">Password:</label>
-        <input type="password" v-model="password" autocomplete required>
-      </div>
-      <button type="submit">Sign up</button>
-      <p v-if="error" class="error-message">
-        <span>{{ error }}</span>
-      </p>
-    </form>
-    <h5>Already have an account? <a href="/sign-in">Sign in.</a></h5>
-  </main>
+        <button type="submit">Sign up</button>
+        <p v-if="error" class="error-message">
+          <span>{{ error }}</span>
+        </p>
+      </form>
+      <h5>Already have an account? <a href="/sign-in">Sign in.</a></h5>
+    </main>
+  </div>
 </template>
 
 <script>
@@ -75,11 +77,6 @@ export default {
   main {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 85vh;
-    margin: 0 4rem;
-    background-color: white;
 
     h1 { margin: 1rem; }
     form {
@@ -117,10 +114,5 @@ export default {
       }
     }
     h5 { margin-top: 1.5rem; }
-
-    .error-message { 
-      color: red;
-      margin: 0.5rem 0 0;
-    }
   }
 </style>

@@ -6,33 +6,38 @@ const _ = require('lodash');
 module.exports = {
   async execute(user_id) {
     try {
-      const query =
-        `SELECT
+      const query = `
+        SELECT
           bg.id,
-          invitee_user.id AS invitee_user_id,
-          invitee_user.username AS invitee_username,
-          inviter_user.id AS inviter_user_id,
-          inviter_user.username AS inviter_username,
-          current_turn_user.id AS current_turn_user_id,
-          current_turn_user.username AS current_turn_user_username,
+          opponent_user.id AS opponent_user_id,
+          opponent_user.username AS opponent_user_username,
+          (SELECT id FROM battleship_games_current_turn_user(bg.id)) AS current_turn_user_id,
+          (SELECT username FROM battleship_games_current_turn_user(bg.id)) AS current_turn_user_username,
+          winner_user.id AS winner_user_id,
           winner_user.username AS winner_username,
           loser_user.username AS loser_username,
-          bg.created_at ::DATE,
-          bg.updated_at ::DATE,
+          bg.created_at AS game_created_at,
+          last_guess.created_at AS last_guess_created_at,
           (SELECT CASE WHEN bg.completed_at IS NULL THEN FALSE ELSE TRUE END) AS is_completed,
-          bg.completed_at
+          bg.completed_at AS game_completed_at
         FROM battleship_game_invitations AS bgi
         JOIN battleship_games AS bg ON bg.battleship_game_invitation_id = bgi.id
           AND bg.archived_at IS NULL
-        JOIN users AS inviter_user ON inviter_user.id = bgi.inviter_user_id
-        JOIN users AS invitee_user ON invitee_user.id = bgi.invitee_user_id
-        LEFT JOIN users AS current_turn_user ON current_turn_user.id = (SELECT battleship_games_current_turn_user_id(bg.id))
+        JOIN users AS opponent_user ON opponent_user.id IN (bgi.inviter_user_id, bgi.invitee_user_id)
+          AND opponent_user.id != $(user_id)
         LEFT JOIN users AS winner_user ON winner_user.id = bg.winner_user_id
         LEFT JOIN users AS loser_user ON loser_user.id = bg.loser_user_id
+        LEFT JOIN battleship_guesses AS last_guess ON last_guess.battleship_game_id = bg.id
+          AND last_guess.created_at = (
+            SELECT MAX(created_at)
+            FROM battleship_guesses
+            WHERE battleship_game_id = bg.id
+          )
         WHERE $(user_id) IN (bgi.inviter_user_id, bgi.invitee_user_id)
           AND bgi.accepted_at IS NOT NULL
           AND bgi.declined_at IS NULL
-          AND bgi.archived_at IS NULL`
+          AND bgi.archived_at IS NULL
+        ORDER BY last_guess.created_at DESC, bg.completed_at DESC, bg.created_at DESC;`
 
       const results = await db.any(query, { user_id: user_id })
       if (_.isEmpty(results)) {

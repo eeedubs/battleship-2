@@ -1,11 +1,13 @@
 <template>
-  <main>
-    <ShipPlacement 
-      v-if="!shipPlacementComplete" 
-      @placementComplete="handlePlacementCompleteResponse"
-    />
-    <PlayGame v-if="shipPlacementComplete" />
-  </main>
+  <div class="page">
+    <main>
+      <ShipPlacement 
+        v-if="!shipPlacementComplete" 
+        @placementComplete="handlePlacementCompleteResponse"
+      />
+      <PlayGame v-if="shipPlacementComplete" />
+    </main>
+  </div>
 </template>
 
 <script>
@@ -40,7 +42,5 @@ export default {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    margin: 0 4rem;
-    background-color: white;
   }
 </style>

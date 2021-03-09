@@ -1,79 +1,83 @@
 <template>
-  <main>
-    <div class="invites-container">
-      <div class="invites">
-        <h2>Game Invitations</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Inviter</th>
-              <th>Invitee</th>
-              <th>Created At</th>
-              <th></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="invitation in gameInvitations" :key="invitation.id">
-              <td>{{ invitation.inviter_user_username }}</td>
-              <td>{{ invitation.invitee_user_username }}</td>
-              <td>{{ dateString(invitation.created_at) }}</td>
-              <td>
-                <button type="submit" @click="acceptInvitation(invitation)">Accept</button>
-              </td>
-              <td>
-                <button type="submit" @click="declineInvitation(invitation)">Decline</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+  <div class="page">
+    <main>
+      <div class="container-left">
+        <div class="invites">
+          <h2>Game Invitations</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Opponent</th>
+                <th>Time of Creation</th>
+                <th class="cell-button"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="invitation in gameInvitations" :key="invitation.id">
+                <td>{{ invitation.opponent_user_username }}</td>
+                <td>{{ calendarString(invitation.created_at) }}</td>
+                <td v-if="currentUserIsInviter(invitation.inviter_user_id)" class="cell-button">
+                  <button type="submit" @click="acceptInvitation(invitation)" class="positive">Accept</button>
+                  <button type="submit" @click="declineInvitation(invitation)" class="negative">Decline</button>
+                </td>
+                <td v-else class="cell-button">Pending</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="games-in-progress">
+          <h2>In-progress Games</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Opponent</th>
+                <th>Starting Time</th>
+                <th>Last Move</th>
+                <th>Turn</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="game in gamesInProgress" :key="game.id" @click="viewGame(game)">
+                <td>{{ game.opponent_user_username }}</td>
+                <td>{{ calendarString(game.game_created_at) }}</td>
+                <td>{{ fromNowString(game.last_guess_created_at) }}</td>
+                <td>{{ currentTurnString(game) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
-    <div class="games-container">
-      <div class="games-in-progress">
-        <h2>In-Progress Games</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Opponent</th>
-              <th>Start Date</th>
-              <th>Turn</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="game in gamesInProgress" :key="game.id" @click="viewGame(game)">
-              <td>{{ getOpponent(game) }}</td>
-              <td>{{ dateString(game.created_at) }}</td>
-              <td>{{ currentTurnString(game) }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="container-right">
+        <div class="games-completed">
+          <h2>Completed Games</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Opponent</th>
+                <th>Starting Time</th>
+                <th>Completion Time</th>
+                <th>Winner</th>
+                <th class="cell-button"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="game in gamesCompleted" :key="game.id">
+                <td @click="viewGame(game)">{{ game.opponent_user_username }}</td>
+                <td @click="viewGame(game)">{{ calendarString(game.created_at) }}</td>
+                <td @click="viewGame(game)">{{ calendarString(game.game_completed_at) }}</td>
+                <td @click="viewGame(game)">{{ getWinnerText(game) }}</td>
+                <td v-if="!invitationWithOpponentAlreadyExists(game.opponent_user_username)" class="cell-button">
+                  <button type="submit" @click="createInvitation(game.opponent_user_username)" class="positive">Rematch</button>
+                </td>
+                <td v-else class="cell-button">
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="games-completed">
-        <h2>Completed Games</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Opponent</th>
-              <th>Start Date</th>
-              <th>Completion Date</th>
-              <th>Winner</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="game in gamesCompleted" :key="game.id" @click="viewGame(game)">
-              <td>{{ getOpponent(game) }}</td>
-              <td>{{ dateString(game.created_at) }}</td>
-              <td>{{ dateString(game.completed_at) }}</td>
-              <td>{{ game.winner_username }}</td>
-              <td>Rematch</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </main>
+    </main>
+  </div>
 </template>
 
 <script>
@@ -114,21 +118,22 @@ export default {
         console.log('Error: ', error);
       }
     },
-    currentTurnString(game) {
-      return game.current_turn_user_id === this.current_user.id
-        ? 'Your turn'
-        : `${game.current_turn_user_username}'s turn`
+
+    async createInvitation(invitee_username) {
+      if (!invitee_username){
+        this.error = "No username was provided."
+        return;
+      }
+      
+      await http.post('game_invitations', {
+        inviter_user_id: this.current_user.id,
+        invitee_username: invitee_username,
+      });
+      this.getDashboardData();
     },
-    getOpponent(game) {
-      return game.inviter_user_id === this.current_user.id
-        ? game.invitee_username
-        : game.inviter_username;
-    },
-    dateString(date) {
-      return moment(date).calendar();
-    },
+
     async acceptInvitation(invitation) {
-      const users_pool = [invitation.inviter_user_id, invitation.invitee_user_id]
+      const users_pool = [invitation.opponent_user_id, this.current_user.id]
       const starting_user_id = _.sample(users_pool);
       try {
         let response = await http.put(`game_invitations/${invitation.id}/accept`, {
@@ -140,6 +145,7 @@ export default {
         console.log('Error: ', error);
       }
     },
+
     async declineInvitation(invitation) {
       try {
         await http.put(`game_invitations/${invitation.id}/decline`)
@@ -148,6 +154,44 @@ export default {
         console.log('Error: ', error);
       }
     },
+
+    invitationWithOpponentAlreadyExists(invitee_username) {
+      for (let invitation of this.gameInvitations) {
+        if (invitation.opponent_user_username === invitee_username){
+          return true;
+        }
+      }
+      return false;
+    },
+
+    currentTurnString(game) {
+      return game.current_turn_user_id === this.current_user.id
+        ? 'Your turn'
+        : `${game.current_turn_user_username}'s turn`
+    },
+
+    currentUserIsInviter(inviter_user_id) {
+      return inviter_user_id === this.current_user.id;
+    },
+
+    calendarString(date) {
+      return !!date
+        ? moment(date).calendar()
+        : null;
+    },
+
+    fromNowString(date) {
+      return !!date 
+        ? moment(date).fromNow() 
+        : null;
+    },
+
+    getWinnerText(game) {
+      return game.winner_user_id === this.current_user.id
+        ? "You"
+        : game.winner_username
+    },
+
     viewGame(game) {
       this.$router.push({ path: `/games/${game.id}` });
     },
@@ -165,12 +209,9 @@ export default {
 <style lang="scss" scoped>
   main {
     display: flex;
-    background-color: white;
-    min-width: 72rem;
-    min-height: 85vh;
-    font-size: 0.85rem;
+    flex-direction: row;
 
-    .invites-container, .games-container {
+    .container-left, .container-right {
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
@@ -179,8 +220,6 @@ export default {
       padding: 0 1rem;
 
       .invites, .games-in-progress, .games-completed {
-        flex: 1;
-
         h2 {
           margin: 1rem 0;
         }
@@ -188,20 +227,38 @@ export default {
         table {
           display: flex;
           flex-direction: column;
-          border: 1px solid;
           tr {
+            display: flex;
+            flex-direction: row;
             border: 1px solid;
-            display: flex;
-            flex-direction: row;
-            flex: 1;
-          }
 
-          th, td {
-            display: flex;
-            flex-direction: row;
-            flex: 1;
-            justify-content: space-evenly;
-            padding: 0;
+            th, td {
+              display: flex;
+              flex-direction: row;
+              justify-content: space-evenly;
+              align-items: center;
+              padding: 0;
+              flex: 1;
+              min-height: 2rem;
+              white-space: nowrap;
+
+              &.game-link {
+                cursor: pointer;
+              }
+
+              &.cell-button {
+                font-style: italic;
+                flex: 0.7;
+
+                &.accept {
+                  background-color: red;
+                }
+
+                &.decline {
+                  background-color: green;
+                }
+              }
+            }
           }
         }
       }

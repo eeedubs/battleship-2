@@ -12,11 +12,10 @@ module.exports = () => {
   return {
     // POST /api/game_invitations/create
     create: async(req, res) => {
-      const { inviter_user_id } = req.params;
-      const { invitee_user_id } = req.body;
+      const { inviter_user_id, invitee_username } = req.body;
 
       try {
-        const response = await createApi.execute(inviter_user_id, invitee_user_id);
+        const response = await createApi.execute(inviter_user_id, invitee_username);
         return res.status(200).end();
       } catch(error) {
         return res.status(500).json({ error: error });
