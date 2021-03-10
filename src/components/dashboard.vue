@@ -22,6 +22,7 @@
                 </td>
                 <td v-else class="cell-button">Pending</td>
               </tr>
+              <tr></tr>
             </tbody>
           </table>
         </div>
@@ -205,7 +206,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
   main {
     display: flex;

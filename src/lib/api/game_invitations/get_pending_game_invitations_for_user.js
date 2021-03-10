@@ -22,7 +22,6 @@ module.exports = {
         ORDER BY bgi.created_at DESC`
 
       const gameInvitations = await db.any(query, { user_id: user_id })
-      console.log(gameInvitations);
       return gameInvitations;
     } catch(error) {
       console.log(error);

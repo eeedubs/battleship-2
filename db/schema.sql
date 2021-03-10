@@ -36,6 +36,19 @@ CREATE TABLE user_friends(
 
 ---------------------------------------------------------------------------------
 
+CREATE TABLE signup_invitations(
+  id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+  inviter_user_id UUID NOT NULL REFERENCES users(id),
+  invitee_email VARCHAR NOT NULL,
+  message VARCHAR NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  accepted_at TIMESTAMPTZ,
+  archived_at TIMESTAMPTZ,
+  user_id UUID REFERENCES users(id)
+);
+
+---------------------------------------------------------------------------------
+
 CREATE TABLE json_web_tokens(
   id bytea NOT NULL PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES users(id),

@@ -1,9 +1,9 @@
 <template>
   <div class="page">
     <main>
-      <h1>Sign up</h1>
-      <form @submit.prevent="submit">
-        <div class="compact">
+      <h1 class="auth-header">Sign up</h1>
+      <form @submit.prevent="submit" class="auth-form">
+        <div class="compact-row">
           <div class="left">
             <label for="first_name">First Name:</label>
             <input type="text" v-model="first_name" autocomplete required>
@@ -14,7 +14,7 @@
           </div>
         </div>
         <br>
-        <div class="tiered">
+        <div class="tiered-row">
           <label for="Username">Username:</label>
           <input type="text" v-model="username" maxlength="20" required>
           <br>
@@ -24,7 +24,7 @@
           <label for="Password">Password:</label>
           <input type="password" v-model="password" autocomplete required>
         </div>
-        <button type="submit">Sign up</button>
+        <button type="submit" class="auth">Sign up</button>
         <p v-if="error" class="error-message">
           <span>{{ error }}</span>
         </p>
@@ -72,47 +72,30 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
   main {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
 
-    h1 { margin: 1rem; }
-    form {
+    .compact-row, .tiered-row {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      background-color: lightblue;
-      width: 30rem;
-      padding: 2rem;
-      .compact, .tiered {
-        display: flex;
-        text-align: left;
+      min-width: 100%;
+      text-align: left;
 
-        .left { padding-right: 1rem; }
-        .right { padding-left: 1rem; }
-        label {
-          text-align: left;
-          font-weight: bold;
-        }
-        input {
-          min-width: 100%;
-        }
-      }
-
-      .compact {
-        flex-direction: row;
-      }
-      .tiered {
-        flex-direction: column;
-      }
-
-      button {
-        background-color: #44b53e;
-        margin-top: 2rem;
-      }
+      .left { padding-right: 1rem; }
+      .right { padding-left: 1rem; }
     }
+
+    .compact-row {
+      flex-direction: row;
+    }
+    .tiered-row {
+      flex-direction: column;
+    }
+
     h5 { margin-top: 1.5rem; }
   }
 </style>

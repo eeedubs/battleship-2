@@ -14,7 +14,8 @@
     "controllers/*",
     "src/store/*",
     "src/components/*",
-    "src/lib/*"
+    "src/lib/*",
+    "src/styles/*"
   ],
   "env": {
     "NODE_ENV": "development"

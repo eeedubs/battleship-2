@@ -1,14 +1,14 @@
 <template>
   <div class="page">
     <main>
-      <h1>Sign In</h1>
-      <form @submit.prevent="submit">
+      <h1 class="auth-header">Sign In</h1>
+      <form @submit.prevent="submit" class="auth-form">
         <label for="Email">Email:</label>
         <input type="text" v-model="email" autocomplete required>
         <br>
         <label for="Password">Password:</label>
         <input type="password" v-model="password" autocomplete required>
-        <button type="submit">Sign In</button>
+        <button type="submit" class="auth">Sign In</button>
         <p v-if="errorState" class="error-message">
           <span>{{ errorState }}</span>
         </p>
@@ -62,36 +62,14 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
   main {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
+    min-height: 80vh;
 
-    h1 { margin: 3rem 0 1rem; }
-    form {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      background-color: lightblue;
-      min-width: 30rem;
-      min-height: 15rem;
-      padding: 2rem;
-      label {
-        text-align: left;
-        font-weight: bold;
-      }
-      input {
-        display: flex;
-        min-width: 100%;
-      }
-
-      button {
-        background-color: #44b53e;
-        margin-top: 2rem;
-      }
-    }
     h5 { margin: 1.5rem 0 3rem; }
   }
 </style>

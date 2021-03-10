@@ -5,8 +5,7 @@ const apiPort     = process.env.API_PORT || 3000;
 const clientPort  = process.env.CLIENT_PORT || 8080;
 
 const cors = require('cors');
-
-const corsOptions = { 
+const corsOptions = {
   origin: [
     `http://${host}:${apiPort}`, // API 
     `https://${host}:${apiPort}`, // API 
@@ -15,6 +14,7 @@ const corsOptions = {
   ],
   allowedHeaders: [
     'x-access-token',
+    'x-csrf-token',
     'Content-Type',
     'Access-Control-Allow-Headers',
   ],
