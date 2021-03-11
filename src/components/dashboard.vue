@@ -1,84 +1,88 @@
 <template>
-  <div class="page">
-    <main>
-      <div class="container-left">
-        <div class="invites">
-          <h2>Game Invitations</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Opponent</th>
-                <th>Time of Creation</th>
-                <th class="cell-button"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="invitation in gameInvitations" :key="invitation.id">
-                <td>{{ invitation.opponent_user_username }}</td>
-                <td>{{ calendarString(invitation.created_at) }}</td>
-                <td v-if="currentUserIsInviter(invitation.inviter_user_id)" class="cell-button">
-                  <button type="submit" @click="acceptInvitation(invitation)" class="positive">Accept</button>
-                  <button type="submit" @click="declineInvitation(invitation)" class="negative">Decline</button>
-                </td>
-                <td v-else class="cell-button">Pending</td>
-              </tr>
-              <tr></tr>
-            </tbody>
-          </table>
+  <v-app>
+    <v-navigation-drawer>
+    </v-navigation-drawer>
+    <div class="page">
+      <main>
+        <div class="container-left">
+          <div class="invites">
+            <h2>Game Invitations</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Opponent</th>
+                  <th>Time of Creation</th>
+                  <th class="cell-button"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="invitation in gameInvitations" :key="invitation.id">
+                  <td>{{ invitation.opponent_user_username }}</td>
+                  <td>{{ calendarString(invitation.created_at) }}</td>
+                  <td v-if="currentUserIsInviter(invitation.inviter_user_id)" class="cell-button">
+                    <button type="submit" @click="acceptInvitation(invitation)" class="positive">Accept</button>
+                    <button type="submit" @click="declineInvitation(invitation)" class="negative">Decline</button>
+                  </td>
+                  <td v-else class="cell-button">Pending</td>
+                </tr>
+                <tr></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="games-in-progress">
+            <h2>In-progress Games</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Opponent</th>
+                  <th>Starting Time</th>
+                  <th>Last Move</th>
+                  <th>Turn</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="game in gamesInProgress" :key="game.id" @click="viewGame(game)">
+                  <td>{{ game.opponent_user_username }}</td>
+                  <td>{{ calendarString(game.game_created_at) }}</td>
+                  <td>{{ fromNowString(game.last_guess_created_at) }}</td>
+                  <td>{{ currentTurnString(game) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div class="games-in-progress">
-          <h2>In-progress Games</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Opponent</th>
-                <th>Starting Time</th>
-                <th>Last Move</th>
-                <th>Turn</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="game in gamesInProgress" :key="game.id" @click="viewGame(game)">
-                <td>{{ game.opponent_user_username }}</td>
-                <td>{{ calendarString(game.game_created_at) }}</td>
-                <td>{{ fromNowString(game.last_guess_created_at) }}</td>
-                <td>{{ currentTurnString(game) }}</td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="container-right">
+          <div class="games-completed">
+            <h2>Completed Games</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Opponent</th>
+                  <th>Starting Time</th>
+                  <th>Completion Time</th>
+                  <th>Winner</th>
+                  <th class="cell-button"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="game in gamesCompleted" :key="game.id">
+                  <td @click="viewGame(game)">{{ game.opponent_user_username }}</td>
+                  <td @click="viewGame(game)">{{ calendarString(game.created_at) }}</td>
+                  <td @click="viewGame(game)">{{ calendarString(game.game_completed_at) }}</td>
+                  <td @click="viewGame(game)">{{ getWinnerText(game) }}</td>
+                  <td v-if="!invitationWithOpponentAlreadyExists(game.opponent_user_username)" class="cell-button">
+                    <button type="submit" @click="createInvitation(game.opponent_user_username)" class="positive">Rematch</button>
+                  </td>
+                  <td v-else class="cell-button">
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-      <div class="container-right">
-        <div class="games-completed">
-          <h2>Completed Games</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Opponent</th>
-                <th>Starting Time</th>
-                <th>Completion Time</th>
-                <th>Winner</th>
-                <th class="cell-button"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="game in gamesCompleted" :key="game.id">
-                <td @click="viewGame(game)">{{ game.opponent_user_username }}</td>
-                <td @click="viewGame(game)">{{ calendarString(game.created_at) }}</td>
-                <td @click="viewGame(game)">{{ calendarString(game.game_completed_at) }}</td>
-                <td @click="viewGame(game)">{{ getWinnerText(game) }}</td>
-                <td v-if="!invitationWithOpponentAlreadyExists(game.opponent_user_username)" class="cell-button">
-                  <button type="submit" @click="createInvitation(game.opponent_user_username)" class="positive">Rematch</button>
-                </td>
-                <td v-else class="cell-button">
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </main>
-  </div>
+      </main>
+    </div>
+  </v-app>
 </template>
 
 <script>

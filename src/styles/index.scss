@@ -1,3 +1,5 @@
+@import '_navigation';
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -25,23 +27,28 @@
     margin: 3rem 0 1rem;
   }
 
-  form.auth-form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    background-color: lightblue;
-    min-width: 34rem;
-    min-height: 15rem;
-    padding: 2rem;
+  form {
+    &.auth-form {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      background-color: lightblue;
+      min-width: 34rem;
+      min-height: 20rem;
+      padding: 2rem;
 
-    label {
-      text-align: left;
-      font-weight: bold;
-    }
+      label {
+        text-align: left;
+        font-weight: bold;
+      }
 
-    input {
-      width: 100%;
+      input {
+        background-color: white;
+        width: 100%;
+        line-height: 1.65rem;
+        padding-left: 0.5rem;
+      }
     }
   }
 

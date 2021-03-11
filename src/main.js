@@ -22,6 +22,7 @@ import store from './store';
 
 // Unicon (icons)
 import Unicon from 'vue-unicons'
+
 import { 
   uniEnter,
   uniArrowUp,
@@ -29,6 +30,8 @@ import {
   uniArrowDown,
   uniArrowLeft,
 } from 'vue-unicons/src/icons'
+
+import vuetify from './plugins/vuetify';
 
 Unicon.add([uniEnter, uniArrowUp, uniArrowRight, uniArrowDown, uniArrowLeft])
 Vue.use(Unicon)
@@ -38,5 +41,6 @@ Vue.config.productionTip = false
 new Vue({
   router,
   store,
-  render: h => h(App),
+  vuetify,
+  render: h => h(App)
 }).$mount('#app')
