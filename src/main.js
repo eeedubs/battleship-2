@@ -31,6 +31,7 @@ import {
   uniArrowLeft,
 } from 'vue-unicons/src/icons'
 
+// Vuetify
 import vuetify from './plugins/vuetify';
 
 Unicon.add([uniEnter, uniArrowUp, uniArrowRight, uniArrowDown, uniArrowLeft])

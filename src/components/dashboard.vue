@@ -1,7 +1,5 @@
 <template>
   <v-app>
-    <v-navigation-drawer>
-    </v-navigation-drawer>
     <div class="page">
       <main>
         <div class="container-left">
@@ -131,14 +129,14 @@ export default {
       }
       
       await http.post('game_invitations', {
-        inviter_user_id: this.current_user.id,
+        inviter_user_id: this.currentUser.id,
         invitee_username: invitee_username,
       });
       this.getDashboardData();
     },
 
     async acceptInvitation(invitation) {
-      const users_pool = [invitation.opponent_user_id, this.current_user.id]
+      const users_pool = [invitation.opponent_user_id, this.currentUser.id]
       const starting_user_id = _.sample(users_pool);
       try {
         let response = await http.put(`game_invitations/${invitation.id}/accept`, {
@@ -170,13 +168,13 @@ export default {
     },
 
     currentTurnString(game) {
-      return game.current_turn_user_id === this.current_user.id
+      return game.current_turn_user_id === this.currentUser.id
         ? 'Your turn'
         : `${game.current_turn_user_username}'s turn`
     },
 
     currentUserIsInviter(inviter_user_id) {
-      return inviter_user_id === this.current_user.id;
+      return inviter_user_id === this.currentUser.id;
     },
 
     calendarString(date) {
@@ -192,7 +190,7 @@ export default {
     },
 
     getWinnerText(game) {
-      return game.winner_user_id === this.current_user.id
+      return game.winner_user_id === this.currentUser.id
         ? "You"
         : game.winner_username
     },
@@ -203,8 +201,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      current_user: 'current_user',
-      token: 'get_token',
+      currentUser: 'currentUser',
+      token: 'getToken',
     }),
   }
 }

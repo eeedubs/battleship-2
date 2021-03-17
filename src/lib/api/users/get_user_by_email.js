@@ -24,8 +24,8 @@ module.exports = {
         user: {
           id: result.id,
           email: result.email,
-          first_name: result.first_name,
-          last_name: result.last_name,
+          firstName: result.first_name,
+          lastName: result.last_name,
           username: result.username,
           passwordHash: result.password_hash
         }

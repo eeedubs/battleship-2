@@ -12,9 +12,11 @@
   margin: 0 -2px;
 
   .page {
-    margin: 0 4rem;
+    display: flex;
     background-color: white;
+    justify-content: center;
     min-height: 90vh;
+    min-width: 100%;
     font-size: 0.9rem;
   }
 
@@ -23,32 +25,24 @@
     margin: 0.5rem 0 0;
   }
 
-  h1.auth-header {
-    margin: 3rem 0 1rem;
-  }
+  .auth-form {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: lightblue;
+    min-width: 30rem;
 
-  form {
-    &.auth-form {
-      display: flex;
-      flex-direction: column;
+    .form-row {
       justify-content: center;
-      align-items: flex-start;
-      background-color: lightblue;
-      min-width: 34rem;
-      min-height: 20rem;
-      padding: 2rem;
+    }
+    
+    label {
+      font-weight: bold;
+      padding-left: 0.7rem;
+    }
 
-      label {
-        text-align: left;
-        font-weight: bold;
-      }
-
-      input {
-        background-color: white;
-        width: 100%;
-        line-height: 1.65rem;
-        padding-left: 0.5rem;
-      }
+    input {
+      padding-left: 0.7rem;
     }
   }
 

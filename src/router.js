@@ -57,11 +57,11 @@ router.beforeEach(async(to, from, next) => {
   const to_page_requires_auth = to.matched.some(record => record.meta.requires_auth)
   const to_auth_page = to.matched.some(record => ['sign-in', 'sign-up'].includes(record.name))
   const from_auth_page = from.matched.some(record => ['sign-in', 'sign-up'].includes(record.name))
-  const is_signed_in = store.getters.is_signed_in;
+  const isSignedIn = store.getters.isSignedIn;
   
   // Accessing /sign-in or /sign-up pages.
   if (to_auth_page) {
-    if (is_signed_in){
+    if (isSignedIn){
       // Redirect to dashboard if signed in.
       return next({ name: 'dashboard' })
     } else {
@@ -71,10 +71,10 @@ router.beforeEach(async(to, from, next) => {
   }
   // Accessing a page requiring authorization.
   if (to_page_requires_auth) {
-    if (is_signed_in) {
+    if (isSignedIn) {
       if (!from_auth_page) {
         // If signed in and not coming directly from /sign-in or /sign-up, refresh the JWT.
-        let response = await store.dispatch('refresh_jwt')
+        let response = await store.dispatch('refreshJwt')
 
         if (response){ 
           // If the response is truthy, continue to page.

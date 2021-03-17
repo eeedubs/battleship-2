@@ -13,12 +13,14 @@ const validator = require('validator');
 const createUserApi = require(__basedir + '/src/lib/api/users/create');
 const createSessionApi = require(__basedir + '/src/lib/api/sessions/create');
 const getAllUsersApi = require(__basedir + '/src/lib/api/users/get_all_users');
+const checkIfEmailIsUniqueApi = require(__basedir + '/src/lib/api/users/check_if_email_is_unique');
+const checkIfUsernameIsUniqueApi = require(__basedir + '/src/lib/api/users/check_if_username_is_unique');
 
 module.exports = () => {
   return {
     // POST /api/users
-    sign_up: async(req, res) => {
-      const { first_name, last_name, username, email } = req.body;
+    signUp: async(req, res) => {
+      const { firstName, lastName, username, email } = req.body;
       
       const emailIsValid = validator.isEmail(email);
       if (!emailIsValid) {
@@ -26,10 +28,29 @@ module.exports = () => {
       }
       
       const normalizedEmail = validator.normalizeEmail(email);
-      const passwordHash = await bcrypt.hash(req.body.password, saltRounds)
-
+      
       try {
-        let response = await createUserApi.execute(first_name, last_name, username, normalizedEmail, passwordHash);
+        // Email unique validation
+        let emailUniqueResponse = await checkIfEmailIsUniqueApi.execute(normalizedEmail);
+        if (emailUniqueResponse.error) {
+          return res.status(500).json({ auth: false, token: '', user: null, error: emailUniqueResponse.error });
+        }
+        if (!emailUniqueResponse.isUnique){
+          return res.json({ auth: false, token: '', user: null, error: 'Email has already been taken.' });
+        }
+
+        // Username unique validation
+        let usernameUniqueResponse = await checkIfUsernameIsUniqueApi.execute(username);
+        if (usernameUniqueResponse.error) {
+          return res.status(500).json({ auth: false, token: '', user: null, error: usernameUniqueResponse.error });
+        }
+        if (!usernameUniqueResponse.isUnique){
+          return res.json({ auth: false, token: '', user: null, error: 'Username has already been taken.' });
+        }
+
+        const passwordHash = await bcrypt.hash(req.body.password, saltRounds)
+
+        let response = await createUserApi.execute(firstName, lastName, username, normalizedEmail, passwordHash);
         if (response.error) {
           return res.status(500).json({ auth: false, token: '', user: null, error: response.error });
         } else {

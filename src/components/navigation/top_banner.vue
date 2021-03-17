@@ -1,11 +1,11 @@
 <template>
   <v-banner height="100%" width="100%" dark>
     <div id="banner-left">
-      <a v-if="current_user" href="/dashboard">Dashboard</a>
+      <h2 class="game-title">BATTLESHIP</h2>
     </div>
 
     <div id="banner-right">
-      <div v-if="!is_signed_in" class="signed-out">
+      <div v-if="!isSignedIn" class="signed-out">
         <a href="/sign-in">Sign In</a>
       </div>
 
@@ -22,7 +22,7 @@
               @click="toggle()"
               dark
             >
-              {{ current_user.username }}
+              {{ currentUser.username }}
               <v-icon v-if="!expanded">mdi-chevron-up</v-icon>
               <v-icon v-else>mdi-chevron-down</v-icon>
             </v-btn>
@@ -55,7 +55,7 @@
 import { mapGetters } from 'vuex';
 
 export default {
-  name: 'Banner',
+  name: 'TopBanner',
   props: {},
   components: {
   },
@@ -65,12 +65,12 @@ export default {
         {
           title: "Settings",
           href: "/settings",
-          action: "navigate_to_settings",
+          action: "navigateToSettings",
         },
         {
           title: "Sign Out",
           href: "/sign-out",
-          action: "sign_out",
+          action: "signOut",
         },
       ],
       expanded: false,
@@ -78,12 +78,12 @@ export default {
   },
   methods: {
     async menuActionClick(action){
-      if (action === "sign_out") {
+      if (action === "signOut") {
         const token = this.token;
-        await this.$store.dispatch('sign_out', { token: token });
+        await this.$store.dispatch('signOut', { token: token });
         this.$router.push({ path: '/sign-in' });
       };
-      if (action === "navigate_to_settings") {
+      if (action === "navigateToSettings") {
         this.$router.push({ path: '/settings' });
       };
     },
@@ -93,12 +93,12 @@ export default {
   },
   computed: {
     ...mapGetters({
-      current_user: 'current_user',
-      is_signed_in: 'is_signed_in',
-      token: 'get_token',
+      currentUser: 'currentUser',
+      isSignedIn: 'isSignedIn',
+      token: 'getToken',
     }),
     username() {
-      return this.current_user ? this.current_user.username : null;
+      return this.currentUser ? this.currentUser.username : null;
     },
   },
 }

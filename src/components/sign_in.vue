@@ -1,18 +1,53 @@
 <template>
   <div class="page">
     <main>
-      <h1 class="auth-header">Sign In</h1>
-      <form @submit.prevent="submit" class="auth-form">
-        <label for="Email">Email:</label>
-        <input type="text" v-model="email" autocomplete required>
-        <br>
-        <label for="Password">Password:</label>
-        <input type="password" v-model="password" autocomplete required>
-        <button type="submit" class="auth">Sign In</button>
-        <p v-if="errorState" class="error-message">
-          <span>{{ errorState }}</span>
-        </p>
-      </form>
+      <h1>Sign In</h1>
+      <v-form 
+        @submit.prevent="submit"
+        class="auth-form"
+      >
+        <v-container>
+          <v-row class="form-row py-2 px-6">
+            <v-text-field
+              v-model="email"
+              label="Email"
+              hide-details="auto"
+              background-color="white"
+              clearable
+              append-icon
+              required
+            ></v-text-field>
+          </v-row>
+          <v-row class="form-row py-2 px-6">
+            <v-text-field
+              v-model="password"
+              label="Password"
+              hide-details="auto"
+              background-color="white"
+              clearable
+              required
+            ></v-text-field>
+          </v-row>
+
+          <template v-for="(error, index) of errors">
+            <v-alert
+              class="mt-6 mb-0 py-0 mx-0"
+              :key="index"
+              dense
+              text
+              type="error"
+            >{{ error }}</v-alert>
+          </template>
+
+          <v-row class="form-row py-1 mt-4 mb-2">
+            <v-btn
+              class="my-0"
+              color="success"
+              @click="submit"
+            >Sign In</v-btn>
+          </v-row>
+        </v-container>
+      </v-form>
       <h5>Don't have an account? <a href="/sign-up">Sign up.</a></h5>
     </main>
   </div>
@@ -52,12 +87,9 @@ export default {
   },
   computed: {
     ...mapGetters({
-      is_signed_in: 'is_signed_in',
-      error: "get_error",
+      isSignedIn: 'isSignedIn',
+      errors: "getErrors",
     }),
-    errorState() {
-      return this.error;
-    }
   }
 }
 </script>
@@ -68,7 +100,7 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 80vh;
+    flex: 1;
 
     h5 { margin: 1.5rem 0 3rem; }
   }

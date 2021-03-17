@@ -5,8 +5,16 @@
 
 div.v-banner {
   display: flex;
-  a {
+  
+  a, h2 {
     color: #f5f5f5;
+  }
+
+  h2.game-title {
+    margin: 0;
+    cursor: default;
+    font-family: 'Century Gothic';
+    letter-spacing: 0.2rem;
   }
   
   div {
@@ -34,5 +42,6 @@ div.v-banner {
   }
   .list-item-title {
     color: white;
+    border: 1px solid gray
   }
 }

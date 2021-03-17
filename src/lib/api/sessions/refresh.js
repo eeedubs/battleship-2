@@ -19,8 +19,8 @@ module.exports = {
         SELECT
           u.id,
           u.email,
-          u.first_name,
-          u.last_name,
+          u.firstName,
+          u.lastName,
           u.username,
           ut.token
         FROM users AS u
@@ -35,8 +35,8 @@ module.exports = {
         user: {
           id: response.id,
           email: response.email,
-          first_name: response.first_name,
-          last_name: response.last_name,
+          firstName: response.firstName,
+          lastName: response.lastName,
           username: response.username
         },
         token: token,
