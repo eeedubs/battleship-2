@@ -3,22 +3,26 @@ const db = require(__basedir + '/src/lib/api/db');
 const _ = require('lodash');
 
 module.exports = {
-  async execute(email) {
+  async execute(username, currentUserId) {
     try {
       const query = 
         `SELECT
           id,
           email,
-          first_name,
-          last_name,
           username,
-          password_hash
+          first_name,
+          last_name
         FROM users
-        WHERE email = $(email)`
+        WHERE username ILIKE ('%' || $(username) || '%')
+          AND id != $(currentUserId)
+        LIMIT 10`
 
-      return await db.oneOrNone(query, { email: email });
+      return await db.any(query, { 
+        username: username,
+        currentUserId: currentUserId,
+      })
     } catch(error) {
-      console.log("Error: ", error);
+      console.log(error);
       return { error: "Something went wrong." };
     };
   },

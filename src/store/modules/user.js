@@ -6,7 +6,7 @@ export default {
     status: null,
     token: null,
     user: null,
-    errors: null,
+    error: null,
   },
   actions: {
     async refreshJwt({commit, state}) {
@@ -44,7 +44,7 @@ export default {
         }
       } catch(error) {
         localStorage.removeItem('token');
-        commit('authError', [error]);
+        commit('authError', error);
         return;
       }
     },
@@ -65,7 +65,7 @@ export default {
         }
       } catch (error) {
         localStorage.removeItem('token');
-        commit('authError', [error]);
+        commit('authError', error);
         return;
       }
     },
@@ -90,13 +90,13 @@ export default {
       state.status = 'success';
       state.token = token;
       state.user = user;
-      state.errors = null;
+      state.error = null;
     },
-    authError(state, errors ) {
+    authError(state, error ) {
       state.status = 'error';
       state.token = null;
       state.user = null;
-      state.errors = errors;
+      state.error = error;
     },
     clearAuthData(state) {
       state.status = null;
@@ -104,13 +104,13 @@ export default {
       state.user = {};
     },
     clearError(state) {
-      state.errors = null;
+      state.error = null;
     },
   },
   getters: {
     isSignedIn: state => !!state.token && !!state.user,
     currentUser: state => state.user,
-    getErrors: state => state.errors,
+    getError: state => state.error,
     getToken: state => state.token,
   },
 }

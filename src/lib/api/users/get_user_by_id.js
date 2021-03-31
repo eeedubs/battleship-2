@@ -10,13 +10,7 @@ module.exports = {
         FROM users
         WHERE id = $(id)`
 
-      const result = await db.oneOrNone(query, { id: id })
-      if (_.isEmpty(results)) {
-        return { error:  `User not found.` };
-      }
-      return {
-        user: { id: result.id }
-      }
+      return await db.oneOrNone(query, { id: id })
     } catch(error) {
       console.log(error);
       return { error: "Something went wrong." };

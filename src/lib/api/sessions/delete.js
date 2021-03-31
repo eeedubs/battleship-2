@@ -9,8 +9,7 @@ module.exports = {
         `DELETE FROM json_web_tokens
         WHERE id = $(token);`
 
-      await db.none(query, { token: token });
-      return;
+      return await db.none(query, { token: token });
     } catch(error) {
       console.log(error);
       return { error: error };

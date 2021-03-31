@@ -10,7 +10,7 @@ module.exports = async(req, res, next) => {
         if (error) { return res.status(403); }
         
         if (decoded.user) {
-          req.user_id = decoded.user.id;
+          req.currentUserId = decoded.user.id;
           return next();
         } else {
           return res.status(403);

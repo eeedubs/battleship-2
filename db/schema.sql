@@ -61,7 +61,8 @@ CREATE TABLE json_web_tokens(
 CREATE TABLE battleship_game_invitations(
   id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
   inviter_user_id UUID NOT NULL REFERENCES users(id),
-  invitee_user_id UUID NOT NULL REFERENCES users(id),
+  invitee_user_id UUID REFERENCES users(id),
+  shareable_link VARCHAR,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   accepted_at TIMESTAMPTZ,
   declined_at TIMESTAMPTZ,
@@ -72,6 +73,70 @@ CREATE INDEX battleship_game_invitations_one_in_progress_per_user_pair_index ON 
   WHERE accepted_at IS NULL
     AND declined_at IS NULL
     AND archived_at IS NULL;
+
+CREATE FUNCTION battleship_game_invitations_for_user(user_id_ UUID)
+RETURNS TABLE (
+  id UUID,
+  user_id UUID,
+  opponent_user_id UUID,
+  created_by UUID,
+  created_at TIMESTAMPTZ,
+  accepted_at TIMESTAMPTZ,
+  declined_at TIMESTAMPTZ,
+  archived_at TIMESTAMPTZ
+)
+LANGUAGE sql
+AS
+$$
+  SELECT 
+    id,
+    inviter_user_id AS user_id,
+    invitee_user_id AS opponent_user_id,
+    inviter_user_id AS created_by,
+    created_at,
+    accepted_at,
+    declined_at,
+    archived_at
+  FROM battleship_game_invitations
+  WHERE inviter_user_id = user_id_
+
+  UNION ALL
+
+  SELECT 
+    id,
+    invitee_user_id AS user_id,
+    inviter_user_id AS opponent_user_id,
+    inviter_user_id AS created_by,
+    created_at,
+    accepted_at,
+    declined_at,
+    archived_at
+  FROM battleship_game_invitations
+  WHERE invitee_user_id = user_id_
+  ORDER BY created_at DESC;
+$$;
+
+---------------------------------------------------------------------------------
+
+CREATE TABLE battleship_games(
+  id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+  battleship_game_invitation_id UUID NOT NULL REFERENCES battleship_game_invitations(id),
+  starting_user_id UUID REFERENCES users(id),
+  winner_user_id UUID REFERENCES users(id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  completed_at TIMESTAMPTZ,
+  archived_at TIMESTAMPTZ,
+  CONSTRAINT battleship_games_winner_completed_at CHECK (
+    (winner_user_id IS NULL AND completed_at IS NULL) 
+    OR (winner_user_id IS NOT NULL AND completed_at IS NOT NULL)
+  )
+);
+
+CREATE TRIGGER game_invitations_check_games_in_progress
+BEFORE UPDATE
+ON battleship_games
+FOR EACH ROW EXECUTE PROCEDURE set_updated_at();
 
 CREATE FUNCTION battleship_game_invitations_prevent_new_when_game_in_progress()
 RETURNS TRIGGER
@@ -88,7 +153,6 @@ BEGIN
       AND bg.completed_at IS NULL
       AND bg.archived_at IS NULL
       AND bg.winner_user_id IS NULL
-      AND bg.loser_user_id IS NULL
     WHERE bgi.inviter_user_id = new.inviter_user_id
       AND bgi.invitee_user_id = new.invitee_user_id
       AND bgi.declined_at IS NULL
@@ -102,31 +166,39 @@ BEGIN
 END;
 $$;
 
+CREATE FUNCTION battleship_games_record_against_user(user_id_ UUID, opponent_user_id_ UUID)
+RETURNS TABLE (
+  user_id UUID,
+  opponent_user_id UUID,
+  win_count BIGINT,
+  loss_count BIGINT
+)
+LANGUAGE sql
+AS
+$$
+  SELECT
+    user_id_ AS user_id,
+    opponent_user_id_ AS opponent_user_id,
+    COUNT(bg_wins.id) AS win_count,
+    COUNT(bg_losses.id) AS loss_count
+  FROM battleship_game_invitations AS bgi
+  JOIN battleship_games AS bg_wins ON bg_wins.battleship_game_invitation_id = bgi.id
+    AND bg_wins.completed_at IS NOT NULL
+    AND bg_wins.winner_user_id = user_id_
+  JOIN battleship_games as bg_losses ON bg_losses.battleship_game_invitation_id = bgi.id
+    AND bg_wins.completed_at IS NOT NULL
+    AND bg_wins.winner_user_id = opponent_user_id_
+  WHERE (
+    (bgi.inviter_user_id = user_id_)
+    OR (bgi.invitee_user_id = user_id_)
+  );
+
+$$;
+
 CREATE TRIGGER game_invitations_check_games_in_progress
 BEFORE INSERT OR UPDATE
 ON battleship_game_invitations
 FOR EACH ROW EXECUTE PROCEDURE battleship_game_invitations_prevent_new_when_game_in_progress();
-
----------------------------------------------------------------------------------
-
-CREATE TABLE battleship_games(
-  id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-  battleship_game_invitation_id UUID NOT NULL REFERENCES battleship_game_invitations(id),
-  starting_user_id UUID REFERENCES users(id),
-  winner_user_id UUID REFERENCES users(id),
-  loser_user_id UUID REFERENCES users(id),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  completed_at TIMESTAMPTZ,
-  archived_at TIMESTAMPTZ,
-  CONSTRAINT battleship_games_winner_loser_different CHECK (winner_user_id != loser_user_id)
-);
-
-
-CREATE TRIGGER game_invitations_check_games_in_progress
-BEFORE UPDATE
-ON battleship_games
-FOR EACH ROW EXECUTE PROCEDURE set_updated_at();
 
 ---------------------------------------------------------------------------------
 
@@ -178,7 +250,6 @@ $$
       WHERE bg.id = battleship_game_id_
         AND bg.completed_at IS NULL
         AND bg.winner_user_id IS NULL
-        AND bg.loser_user_id IS NULL
     )
   SELECT u.*
   FROM users AS u

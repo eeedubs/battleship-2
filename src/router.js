@@ -21,6 +21,9 @@ const router = new VueRouter({
       meta: {
         requires_auth: false,
       },
+      beforeEnter: (to, from, next) => {
+        return checkIfSignedIn(to, from, next);
+      }
     },
     { 
       path: "/sign-up",
@@ -29,13 +32,19 @@ const router = new VueRouter({
       meta: {
         requires_auth: false,
       },
+      beforeEnter: (to, from, next) => {
+        return checkIfSignedIn(to, from, next);
+      }
     },
     { 
       path: "/dashboard", 
       name: "dashboard", 
-      component: Dashboard, 
+      component: Dashboard,
       meta: {
         requires_auth: true,
+      },
+      beforeEnter: (to, from, next) => {
+        return handleAuthorizedRoute(to, from, next);
       },
     },
     {
@@ -45,6 +54,9 @@ const router = new VueRouter({
       meta: {
         requires_auth: true,
       },
+      beforeEnter: (to, from, next) => {
+        return handleAuthorizedRoute(to, from, next);
+      }
     },
     {
       path: '/',
@@ -53,45 +65,29 @@ const router = new VueRouter({
   ],
 });
 
-router.beforeEach(async(to, from, next) => {
-  const to_page_requires_auth = to.matched.some(record => record.meta.requires_auth)
-  const to_auth_page = to.matched.some(record => ['sign-in', 'sign-up'].includes(record.name))
-  const from_auth_page = from.matched.some(record => ['sign-in', 'sign-up'].includes(record.name))
-  const isSignedIn = store.getters.isSignedIn;
-  
-  // Accessing /sign-in or /sign-up pages.
-  if (to_auth_page) {
-    if (isSignedIn){
-      // Redirect to dashboard if signed in.
-      return next({ name: 'dashboard' })
-    } else {
-      // Continue to page.
-      return next();
-    }
+const checkIfSignedIn = (to, from, next) => {
+  if (store.getters.isSignedIn) {
+    return next({ name: 'dashboard' });
   }
-  // Accessing a page requiring authorization.
-  if (to_page_requires_auth) {
-    if (isSignedIn) {
-      if (!from_auth_page) {
-        // If signed in and not coming directly from /sign-in or /sign-up, refresh the JWT.
-        let response = await store.dispatch('refreshJwt')
+  return next();
+};
 
-        if (response){ 
-          // If the response is truthy, continue to page.
-          return next() 
-        } else {
-          // Else (response is falsey), redirect to /sign-in.
-          return next({ name: 'sign-in' });
-        }
-      } else {
-        // Else (coming from /sign-in or /sign-up), continue to page.
+const handleAuthorizedRoute = async(to, from, next) => {
+  const fromAuthPage = from.matched.some(record => ['sign-in', 'sign-up'].includes(record.name))
+  
+  if (!store.getters.isSignedIn){
+    return next({ name: 'sign-in' });
+  } else {
+    if (!fromAuthPage) {
+      let response = await store.dispatch('refreshJwt')
+      if (response){ 
         return next();
       }
-    } else {
-      // Else (is not signed in), redirect to /sign-in. 
+
       return next({ name: 'sign-in' });
     }
+    return next();
   }
-});
+};
 
 export default router;

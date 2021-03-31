@@ -4,101 +4,112 @@
       <h1>Sign Up</h1>
       <v-form 
         @submit.prevent="submit" 
-        class="auth-form"
+        class="basic-form"
         ref="form"
       >
-        <v-container>
-          <v-row class="form-row py-2 px-6">
-            <v-col class="pl-0 pt-0">
-              <v-text-field 
-                v-model="firstName"
-                label="First Name"
-                hide-details="auto"
-                lazy-validation
-                background-color="white"
-                clearable
-                append-icon
-                :rules="[basicRules.required]"
-                validate-on-blur
-              ></v-text-field>
-            </v-col>
-            
-            <v-col class="pr-0 pt-0">
-              <v-text-field 
-                v-model="lastName"
-                label="Last Name"
-                hide-details="auto"
-                lazy-validation
-                background-color="white"
-                clearable
-                append-icon
-                :rules="[basicRules.required]"
-                validate-on-blur
-              ></v-text-field>
-            </v-col>
-          </v-row>
-
-          <v-row class="form-row py-2 px-6">
-            <v-text-field 
-              v-model="username"
-              label="Username"
-              hide-details="auto"
-              lazy-validation
-              background-color="white"
-              clearable
-              append-icon
-              :rules="[basicRules.required, usernameRules.min, usernameRules.max]"
-              validate-on-blur
-            ></v-text-field>
-          </v-row>
-
-          <v-row class="form-row py-2 px-6">
-            <v-text-field 
-              v-model="email"
-              label="Email"
-              hide-details="auto"
-              lazy-validation
-              background-color="white"
-              clearable
-              append-icon
-              :rules="[basicRules.required]"
-              validate-on-blur
-            ></v-text-field>
-          </v-row>
-
-          <v-row class="form-row py-2 px-6">
+        <v-row class="form-row pt-4 px-6 my-0">
+          <v-col class="pl-0 py-0 my-0">
             <v-text-field
-              v-model="password"
-              label="Password"
+              id="firstNameInput"
+              tabIndex="1"
+              v-model="firstName"
+              label="First Name"
               hide-details="auto"
               lazy-validation
               background-color="white"
-              clearable
-              append-icon
               :rules="[basicRules.required]"
               validate-on-blur
-              type="password"
+              clearable
+              @keyup.enter="tabTo('lastNameInput')"
             ></v-text-field>
-          </v-row>
+          </v-col>
 
-          <template v-for="(error, index) of errors">
-            <v-alert
-              class="mt-6 mb-0 py-0 mx-0"
-              :key="index"
-              dense
-              text
-              type="error"
-            >{{ error }}</v-alert>
-          </template>
+          <v-col class="pr-0 py-0 my-0">
+            <v-text-field
+              id="lastNameInput"
+              tabIndex="2"
+              v-model="lastName"
+              label="Last Name"
+              hide-details="auto"
+              lazy-validation
+              background-color="white"
+              :rules="[basicRules.required]"
+              validate-on-blur
+              clearable
+              @keyup.enter="tabTo('usernameInput')"
+            ></v-text-field>
+          </v-col>
+        </v-row>
 
-          <v-row class="form-row py-1 mt-4 mb-2">
-            <v-btn
-              class="my-0"
-              color="success"
-              @click="submit"
-            >Sign Up</v-btn>
-          </v-row>
-        </v-container>
+        <!-- username -->
+        <v-row class="form-row pt-4 px-6 my-0">
+          <v-text-field 
+            id="usernameInput"
+            tabIndex="3"
+            v-model="username"
+            label="Username"
+            hide-details="auto"
+            lazy-validation
+            background-color="white"
+            :rules="[basicRules.required, usernameRules.min, usernameRules.max]"
+            validate-on-blur
+            clearable
+            @keyup.enter="tabTo('emailInput')"
+          ></v-text-field>
+        </v-row>
+
+        <!-- email -->
+        <v-row class="form-row pt-4 px-6 my-0">
+          <v-text-field
+            id="emailInput"
+            tabIndex="4"
+            v-model="email"
+            label="Email"
+            hide-details="auto"
+            lazy-validation
+            background-color="white"
+            :rules="[basicRules.required]"
+            validate-on-blur
+            clearable
+            @keyup.enter="tabTo('passwordInput')"
+          ></v-text-field>
+        </v-row>
+
+        <!-- password -->
+        <v-row class="form-row pt-4 px-6 my-0">
+          <v-text-field
+            id="passwordInput"
+            tabIndex="5"
+            v-model="password"
+            label="Password"
+            :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="showPassword ? 'text' : 'password'"
+            :rules="[basicRules.required]"
+            hide-details="auto"
+            lazy-validation
+            background-color="white"
+            validate-on-blur
+            clearable
+            @click:append="showPassword = !showPassword"
+            @keyup.enter="submit"
+          ></v-text-field>
+        </v-row>
+
+        <v-alert
+          v-if="error"
+          class="mt-2 mb-0 mx-0 py-0"
+          dense
+          text
+          type="error"
+        >{{ error }}</v-alert>
+
+        <v-row class="form-row pt-4 pb-4 my-0">
+          <v-btn
+            class="my-0"
+            color="success"
+            @click="submit"
+          >Sign Up</v-btn>
+        </v-row>
       </v-form>
       <h5>Already have an account? <a href="/sign-in">Sign in.</a></h5>
     </main>
@@ -107,7 +118,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { http } from '@/http'
 
 export default {
   name: 'SignUp',
@@ -122,6 +132,7 @@ export default {
       usernameIsUnique: null,
       email: '',
       password: '',
+      showPassword: false,
       basicRules: {
         required: v => !!v || 'Required.',
       },
@@ -134,7 +145,7 @@ export default {
   computed: {
     ...mapGetters({
       isSignedIn: 'isSignedIn',
-      errors: "getErrors",
+      error: "getError",
     }),
   },
   async created() {
@@ -158,6 +169,9 @@ export default {
         console.log(error);
       }
     },
+    tabTo(elementId) {
+      document.getElementById(elementId).focus();
+    },
   },
 }
 </script>
@@ -169,22 +183,6 @@ export default {
     justify-content: center;
     align-items: center;
     min-height: 80vh;
-
-    .compact-row, .tiered-row {
-      display: flex;
-      min-width: 100%;
-      text-align: left;
-
-      .left { padding-right: 1rem; }
-      .right { padding-left: 1rem; }
-    }
-
-    .compact-row {
-      flex-direction: row;
-    }
-    .tiered-row {
-      flex-direction: column;
-    }
 
     h5 { margin-top: 1.5rem; }
   }

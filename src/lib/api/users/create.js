@@ -12,22 +12,13 @@ module.exports = {
           ($(firstName), $(lastName), $(username), $(email), $(passwordHash))
         RETURNING id, first_name, last_name, email, username;`
 
-      const results = await db.one(query, {
+      return await db.one(query, {
         firstName: firstName,
         lastName: lastName,
         username: username,
         email: email,
         passwordHash: passwordHash,
       })
-      return { 
-        user: {
-          id: results.id,
-          email: results.email,
-          firstName: results.first_name,
-          lastName: results.last_name,
-          username: results.username
-        }
-      }
     } catch(error) {
       console.log(error);
       return { error: "Something went wrong." };

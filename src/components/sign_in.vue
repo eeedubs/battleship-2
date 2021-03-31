@@ -2,51 +2,58 @@
   <div class="page">
     <main>
       <h1>Sign In</h1>
-      <v-form 
+      <v-form
         @submit.prevent="submit"
-        class="auth-form"
+        class="basic-form"
+        ref="form"
       >
-        <v-container>
-          <v-row class="form-row py-2 px-6">
-            <v-text-field
-              v-model="email"
-              label="Email"
-              hide-details="auto"
-              background-color="white"
-              clearable
-              append-icon
-              required
-            ></v-text-field>
-          </v-row>
-          <v-row class="form-row py-2 px-6">
-            <v-text-field
-              v-model="password"
-              label="Password"
-              hide-details="auto"
-              background-color="white"
-              clearable
-              required
-            ></v-text-field>
-          </v-row>
+        <v-row class="form-row pt-4 px-6 my-0">
+          <v-text-field
+            id="emailInput"
+            tabindex="1"
+            v-model="email"
+            label="Email"
+            hide-details="auto"
+            background-color="white"
+            clearable
+            :rules="[basicRules.required]"
+            @keyup.enter="tabTo('passwordInput')"
+          >
+          </v-text-field>
+        </v-row>
+        <v-row class="form-row pt-4 px-6 my-0">
+          <v-text-field
+            id="passwordInput"
+            tabindex="2"
+            v-model="password"
+            :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="showPassword ? 'text' : 'password'"
+            :rules="[basicRules.required]"
+            label="Password"
+            hide-details="auto"
+            background-color="white"
+            clearable
+            @click:append="showPassword = !showPassword"
+            @keyup.enter="submit"
+          >
+          </v-text-field>
+        </v-row>
 
-          <template v-for="(error, index) of errors">
-            <v-alert
-              class="mt-6 mb-0 py-0 mx-0"
-              :key="index"
-              dense
-              text
-              type="error"
-            >{{ error }}</v-alert>
-          </template>
+        <v-alert
+          v-if="error"
+          class="mt-2 mb-0 mx-0"
+          :key="index"
+          dense
+          text
+          type="error"
+        >{{ error }}</v-alert>
 
-          <v-row class="form-row py-1 mt-4 mb-2">
-            <v-btn
-              class="my-0"
-              color="success"
-              @click="submit"
-            >Sign In</v-btn>
-          </v-row>
-        </v-container>
+        <v-row class="form-row pt-4 pb-4 my-0">
+          <v-btn
+            color="success"
+            @click="submit"
+          >Sign In</v-btn>
+        </v-row>
       </v-form>
       <h5>Don't have an account? <a href="/sign-up">Sign up.</a></h5>
     </main>
@@ -63,32 +70,41 @@ export default {
   },
   data() {
     return {
+      showPassword: false,
       email: '',
       password: '',
+      basicRules: {
+        required: v => !!v || 'Required.',
+      },
     }
   },
   async created() {
-    await this.$store.dispatch('clear_error');
+    await this.$store.dispatch('clearError');
   },
   methods: {
     async submit() {
-      try {
-        const response = await this.$store.dispatch('sign_in', { 
-          email: this.email, 
-          password: this.password,
-        });
-        if (response && response.auth){
-          this.$router.push({ path: '/dashboard' });
-        }
-      } catch(error) {
-        console.log("Error: ", error.response.statusText);
-      };
+      if (this.$refs.form.validate()) {
+        try {
+          const response = await this.$store.dispatch('signIn', { 
+            email: this.email, 
+            password: this.password,
+          });
+          if (response && response.auth){
+            this.$router.push({ path: '/dashboard' });
+          }
+        } catch(error) {
+          console.log("Error: ", error.response.statusText);
+        };
+      }
+    },
+    tabTo(elementId) {
+      document.getElementById(elementId).focus();
     },
   },
   computed: {
     ...mapGetters({
       isSignedIn: 'isSignedIn',
-      errors: "getErrors",
+      error: "getError",
     }),
   }
 }

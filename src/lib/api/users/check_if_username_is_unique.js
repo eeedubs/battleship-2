@@ -13,8 +13,7 @@ module.exports = {
           WHERE username = $(username)
         ) AS is_unique`
 
-      const result = await db.one(query, { username: username });
-      return { isUnique: result.is_unique };
+      return await db.one(query, { username: username });
     } catch(error) {
       console.log("Error: ", error);
       return { error: "Something went wrong." };

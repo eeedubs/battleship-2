@@ -29,19 +29,18 @@ div.v-banner {
   }
 }
 
-.pb-0.mx-auto.list {
-  padding: 0;
-  background-color: #404040;
+.top-list .list-item-spec:hover {
+  background-color: #606060!important;
+  text-decoration: underline;
+  text-decoration-color: white;
 }
 
-.list-item {
-  &:hover {
-    background-color: #606060;
-    text-decoration: underline;
-    text-decoration-color: white;
-  }
-  .list-item-title {
-    color: white;
-    border: 1px solid gray
-  }
+.top-list-item-title {
+  color: white;
+}
+
+.side-list-item-title {
+  line-height: 1.5rem!important;
+  font-size: 1.4rem!important;
+  text-align: left;
 }

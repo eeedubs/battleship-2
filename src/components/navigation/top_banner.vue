@@ -1,15 +1,15 @@
 <template>
-  <v-banner height="100%" width="100%" dark>
+  <v-banner height="100%" width="100%" class="grey darken-3">
     <div id="banner-left">
       <h2 class="game-title">BATTLESHIP</h2>
     </div>
 
     <div id="banner-right">
-      <div v-if="!isSignedIn" class="signed-out">
+      <v-container v-if="!isSignedIn" class="signed-out">
         <a href="/sign-in">Sign In</a>
-      </div>
+      </v-container>
 
-      <div v-else> 
+      <v-container v-else> 
         <v-menu
           sub-group
           offset-y
@@ -20,33 +20,29 @@
               height="0"
               v-on="on"
               @click="toggle()"
-              dark
+              color="white"
+              text
             >
               {{ currentUser.username }}
               <v-icon v-if="!expanded">mdi-chevron-up</v-icon>
               <v-icon v-else>mdi-chevron-down</v-icon>
             </v-btn>
           </template>
-          <v-list
-            class="pb-0 mx-auto list"
-          >
-              <v-list-item
-                v-for="(item, index) in items"
-                :key="index"
-                @click="menuActionClick(item.action)"
-                class="list-item"
-                dense
-              >
-              <v-list-item-title 
-                class="list-item-title"
-                dark
-              >
+          <v-list class="px-0 py-0 mx-auto top-list">
+            <v-list-item
+              v-for="(item, index) in items"
+              :key="index"
+              @click="menuActionClick(item.action)"
+              class="grey darken-3 list-item-spec"
+              dense
+            >
+              <v-list-item-title class="top-list-item-title">
                 {{ item.title }}
               </v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
-      </div>
+      </v-container>
     </div>
   </v-banner>
 </template>

@@ -159,7 +159,7 @@ export default {
     attemptToPlaceShip() {
       this.isAttemptingToPlaceShip = true;
     },
-    // used to mark ships as placed and 
+    // used to mark ships as placed 
     placeSelectedShip(shipCoordinates) {
       this.getSelectedShip.coordinates = this.formatCoordinates(shipCoordinates);
       this.getSelectedShip.placed = true;

@@ -4,18 +4,18 @@ require('dotenv').config()
 const db = require(__basedir + '/src/lib/api/db');
 
 // Dependencies
-const createApi = require(__basedir + '/src/lib/api/game_invitations/create');
-const acceptAndCreateGameApi = require(__basedir + '/src/lib/api/game_invitations/accept_and_create_game');
-const declineApi = require(__basedir + '/src/lib/api/game_invitations/decline');
+const createGameInvitationApi = require(__basedir + '/src/lib/api/game_invitations/create');
+const acceptGameInvitationAndCreateGameApi = require(__basedir + '/src/lib/api/game_invitations/accept_and_create_game');
+const declineGameInvitationApi = require(__basedir + '/src/lib/api/game_invitations/decline');
 
 module.exports = () => {
   return {
     // POST /api/game_invitations/create
     create: async(req, res) => {
-      const { inviter_user_id, invitee_username } = req.body;
+      const { inviterUserId, inviteeUsername } = req.body;
 
       try {
-        const response = await createApi.execute(inviter_user_id, invitee_username);
+        await createGameInvitationApi.execute(inviterUserId, inviteeUsername);
         return res.status(200).end();
       } catch(error) {
         return res.status(500).json({ error: error });
@@ -24,14 +24,11 @@ module.exports = () => {
 
     // POST /api/game_invitations/:id/accept
     accept: async(req, res) => {
-      const { invitation_id, starting_user_id } = req.params;
+      const { invitationId, startingUserId } = req.params;
 
       try {
-        const response = await acceptAndCreateGameApi.execute(invitation_id, starting_user_id);
-        if (response.error) {
-          return res.status(500).json({ id: null, error: response.error });
-        }
-        return res.status(200).json({ id: response.id, error: null });
+        const game = await acceptGameInvitationAndCreateGameApi.execute(invitationId, startingUserId);
+        return res.status(200).json({ id: game.id, error: null });
       } catch(error) {
         return res.status(500).json({ error: error });
       }
@@ -39,10 +36,10 @@ module.exports = () => {
 
     // POST /api/game_invitations/:id/decline
     decline: async(req, res) => {
-      const { invitation_id } = req.params;
+      const { invitationId } = req.params;
 
       try {
-        await declineApi.execute(invitation_id);
+        await declineGameInvitationApi.execute(invitationId);
         return res.status(200).end();
       } catch(error) {
         return res.status(500).json({ error: error });

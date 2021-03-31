@@ -1,17 +1,19 @@
 <template>
-  <v-list dark>
-    <v-list-item
-      v-for="(item, index) in items"
-      :key="index"
-    >
-      <v-list-item-title
-        class="list-item-title"
-        @click="menuActionClick(item.action)"
+  <v-container class="pa-0 ma-0">
+    <v-list width="10rem">
+      <v-list-item
+        v-for="(item, index) in navItems"
+        :key="index"
+        @click="menuViewClick(item.view)"
+        class="side-list pl-0"
+        dense
       >
-        {{ item.title }}
-      </v-list-item-title>
-    </v-list-item>
-  </v-list>
+        <v-list-item-title class="side-list-item-title pl-6">
+          {{ item.title }}
+        </v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </v-container>
 </template>
 
 <script>
@@ -24,32 +26,30 @@ export default {
   },
   data() {
     return {
-      items: [
+      expanded: false,
+      navItems: [
         {
-          title: "Settings",
-          href: "/settings",
-          action: "navigate_to_settings",
+          title: "Play",
+          view: "currentGames",
         },
         {
-          title: "Sign Out",
-          href: "/sign-out",
-          action: "sign_out",
+          title: "History",
+          view: "gameHistory",
+        },
+        {
+          title: "Friends",
+          view: "friends",
         },
       ],
-      expanded: false,
     }
   },
   methods: {
-    async menuActionClick(action){
-      if (action === "sign_out") {
-        const token = this.token;
-        await this.$store.dispatch('sign_out', { token: token });
-        this.$router.push({ path: '/sign-in' });
-      };
-      if (action === "navigate_to_settings") {
-        this.$router.push({ path: '/settings' });
-      };
+    menuViewClick(view) {
+      return this.$emit('changeView', view);
     },
+    toggle() {
+      this.expanded = !this.expanded;
+    }
   },
   computed: {
     ...mapGetters({

@@ -4,20 +4,21 @@ const router = express.Router();
 
 module.exports = (jwtMiddleWare) => {
   // Route prefix is /api/sessions
-  const sessions_controller = require(__basedir + '/controllers/sessions_controller')()
+  const sessionsController = require(__basedir + '/controllers/sessions_controller')()
 
+  // PUT request to refresh sessions 
   router.put('/sessions', (req, res) => {
-    sessions_controller.refresh(req, res);
+    sessionsController.refresh(req, res);
   });
 
   // POST request to create sessions (sign in)
   router.post('/sessions', (req, res) => {
-    sessions_controller.sign_in(req, res);
+    sessionsController.signIn(req, res);
   });
 
   // DELETE request to delete sessions (sign out)
   router.delete('/sessions', (req, res) => {
-    sessions_controller.sign_out(req, res);
+    sessionsController.signOut(req, res);
   });
 
   return router;

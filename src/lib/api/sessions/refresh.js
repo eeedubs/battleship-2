@@ -1,7 +1,7 @@
 
 const { resolve } = require('path');
 const db = require(__basedir + '/src/lib/api/db');
-const _ = require('lodash');
+const _ = ('lodash');
 
 module.exports = {
   async execute(token) {
@@ -19,28 +19,13 @@ module.exports = {
         SELECT
           u.id,
           u.email,
-          u.firstName,
-          u.lastName,
-          u.username,
-          ut.token
+          u.first_name,
+          u.last_name,
+          u.username
         FROM users AS u
         JOIN update_token AS ut ON ut.user_id = u.id`
 
-      const response = await db.oneOrNone(query, { token: token })
-      if (_.isEmpty(response)) {
-        return { error:  `Could not authenticate the provided user.` };
-      };
-
-      return {
-        user: {
-          id: response.id,
-          email: response.email,
-          firstName: response.firstName,
-          lastName: response.lastName,
-          username: response.username
-        },
-        token: token,
-      }
+      return await db.oneOrNone(query, { token: token })
     } catch(error) {
       console.log(error);
       return { error: error };
