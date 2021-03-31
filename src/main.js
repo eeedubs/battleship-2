@@ -9,10 +9,6 @@ import router from './router.js';
 // Styles
 import './styles/index.scss';
 
-// BootStrap
-import { BootstrapVue } from 'bootstrap-vue';
-Vue.use(BootstrapVue);
-
 // Http
 import http from './http';
 Vue.prototype.$http = http;
@@ -20,22 +16,8 @@ Vue.prototype.$http = http;
 // Store
 import store from './store';
 
-// Unicon (icons)
-import Unicon from 'vue-unicons'
-
-import { 
-  uniEnter,
-  uniArrowUp,
-  uniArrowRight,
-  uniArrowDown,
-  uniArrowLeft,
-} from 'vue-unicons/src/icons'
-
 // Vuetify
 import vuetify from './plugins/vuetify';
-
-Unicon.add([uniEnter, uniArrowUp, uniArrowRight, uniArrowDown, uniArrowLeft])
-Vue.use(Unicon)
 
 Vue.config.productionTip = false
 
